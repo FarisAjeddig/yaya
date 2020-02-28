@@ -1,0 +1,31 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% block fos_user_content %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Modifier mon numéro de téléphone</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid row p-5">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4">
+            {% form_theme form 'bootstrap_4_layout.html.twig' %}
+            {{ form_start(form) }}
+
+            {{ form_errors(form) }}
+
+            {{ form_label(form.phone_number,"",  {label_attr: {style: 'font-size: 18px'} }) }}
+            {{ form_widget(form.phone_number) }}
+            {{ form_errors(form.phone_number) }}<br>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock fos_user_content %}

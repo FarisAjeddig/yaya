@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Administration - Les médecins</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid row p-2" style="background-color: #cddcdf; box-sizing: unset;">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4 text-center"><br><br>
+            {% form_theme form 'bootstrap_4_layout.html.twig' %}
+            {{ form(form) }}
+        </div>
+    </div>
+    <script>
+        // Using this tutorial for autocomplete address : https://www.youtube.com/watch?v=Rpzp0yCAmq4
+        function activatePlacesSearch(){
+            var options = { componentRestrictions: { country: "fr"} };
+            var input = document.getElementById("doctor_edit_by_admin_adress");
+            var autocomplete = new google.maps.places.Autocomplete(input, options);
+        }
+    </script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuZviasKN0VON99Nz4I8b_tu6YZDcmrsw&libraries=places&callback=activatePlacesSearch&libraries=places"></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Un email de confirmation a été envoyé à {{ user.email }}.</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock fos_user_content %}

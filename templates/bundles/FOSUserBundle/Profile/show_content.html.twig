@@ -1,0 +1,38 @@
+{% trans_default_domain 'FOSUserBundle' %}
+<div class="bradcam_area bradcam_bg_3">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="bradcam_text">
+                    <h3>{{user.username}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid row p-5">
+    {% if user.is_doctor %}
+        <div class="col-lg-2"></div>
+
+    {% endif %}
+    <div class="col-lg-4">
+        {% if user.is_doctor %}
+            <p style="font-size: 22px; background-color: #e6f1ff;" class="form-control text-center"><b>Médecin</b></p><br>
+            {{ render(controller('App\\Controller\\DefaultController::infoDoctorAction')) }}
+        {% endif %}
+    </div>
+    <div class="col-lg-4 text-center">
+        <p style="font-size: 22px; background-color: #e6f1ff;" class="form-control"><b>Nom et prénom</b> : {{ user.username }}</p><br>
+        <p style="font-size: 22px; background-color: #e6f1ff;" class="form-control"><b>{{ 'profile.show.email'|trans }}</b> : {{ user.email }}</p><br>
+        <a href="{{ url('fos_user_profile_edit') }}" class="btn btn-outline-success btn-block">Modifier</a><br>
+
+        <a href="{{ url('fos_user_change_password') }}" class="btn btn-danger btn-block">Modifier votre mot de passe</a><br><br>
+
+        <hr class="solid border-bottom">
+        <br><br>
+        <p style="font-size: 22px; background-color: #e6f1ff;" class="form-control"><b>Numéro de téléphone</b> : {{ user.phone_number }}
+            <a href="{{ url('profile_edit_phone') }}" style="margin-left: 20px"><b><i class="ti-pencil"></i></b></a></p><br>
+    </div>
+</div>
+{{ dump(user) }}

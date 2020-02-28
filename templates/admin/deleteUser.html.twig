@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Administration - Supprimer {{ user.username }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid row p-5">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6 text-center">
+            {{ user.username }}<br>
+            {{ user.email }} <br>
+            {{ user.phone_number }} <br><br>
+            <a href="{{ url('admin_confirm_delete_user', {id: user.id}) }}" class="genric-btn primary e-large" style="font-size: 20px ">Confirmer la suppression</a>
+        </div>
+    </div>
+{% endblock %}

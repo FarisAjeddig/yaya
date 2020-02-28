@@ -1,0 +1,20 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3 style="text-transform: none !important;">Votre compte a bien été créé {{ user.username }} !</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Fichier template/default/register_confirmed_form.html.twig #}
+    {{ render(controller('App\\Controller\\DefaultController::FormRegisterConfirmedAction')) }}
+{% endblock fos_user_content %}

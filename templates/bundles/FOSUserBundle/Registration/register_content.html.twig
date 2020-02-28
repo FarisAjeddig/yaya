@@ -1,0 +1,46 @@
+{% trans_default_domain 'FOSUserBundle' %}
+<div class="bradcam_area bradcam_bg_3">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="bradcam_text">
+                    <h3>Inscription</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid row p-5">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        {% form_theme form 'bootstrap_4_layout.html.twig' %}
+        {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+            {{ form_errors(form) }}
+
+            {{ form_label(form.username, 'Nom et prénom', {label_attr: {style: 'font-size: 18px'} }) }}
+            {{ form_widget(form.username) }}
+            {{ form_errors(form.username) }}<br>
+
+            {{ form_label(form.email, 'Adresse mail', {label_attr: {style: 'font-size: 18px'} }) }}
+            {{ form_widget(form.email) }}
+            {{ form_errors(form.email) }}<br>
+
+            {{ form_label(form.plainPassword.first, 'Mot de passe', {label_attr: {style: 'font-size: 18px'} }) }}
+            {{ form_widget(form.plainPassword.first) }}
+            {{ form_errors(form.plainPassword.first) }}<br>
+
+            {{ form_label(form.plainPassword.second, 'Confirmer le mot de passe', {label_attr: {style: 'font-size: 18px'} }) }}
+            {{ form_widget(form.plainPassword.second) }}<br>
+
+            {{ form_rest(form) }}
+            <br>
+            <div>
+                <input type="submit" class="form-control btn-primary btn-block" value="Inscription" />
+            </div>
+        {{ form_end(form) }}
+        <br>
+        <div class="text-center">ou <a href="{{ url('fos_user_security_login') }}" class="text-success">se connecter</a></div>
+    </div>
+</div>

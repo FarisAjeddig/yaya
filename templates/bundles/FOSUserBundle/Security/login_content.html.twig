@@ -1,0 +1,40 @@
+{% trans_default_domain 'FOSUserBundle' %}
+<div class="bradcam_area bradcam_bg_3">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="bradcam_text">
+                    <h3>Connexion</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% if error %}
+    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}
+<div class="container-fluid row p-5">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <form action="{{ path("fos_user_security_check") }}" class="form-group" method="post">
+            {% if csrf_token %}
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+            {% endif %}
+
+            <label for="username" style="font-size: 18px">Adresse mail</label>
+            <input type="text" class="form-control" id="username" name="_username" value="{{ last_username }}" required="required" autocomplete="username" />
+            <br>
+            <label for="password" style="font-size: 18px">Mot de passe</label>
+            <input type="password" class="form-control" id="password" name="_password" required="required" autocomplete="current-password" />
+            <div class="text-right"><a href="{{ url('fos_user_resetting_request') }}" class="text-danger">Mot de passe oublié</a></div>
+            <br><br>
+{#            <input type="checkbox" class="form-control" id="remember_me" name="_remember_me" value="on" />#}
+{#            <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>#}
+
+            <input type="submit" class="form-control btn-primary btn-block" id="_submit" name="_submit" value="Connexion" />
+        </form>
+        <br>
+        <div class="text-center">ou <a href="{{ url('fos_user_registration_register') }}" class="text-success">s'inscrire</a></div>
+
+    </div>
+</div>

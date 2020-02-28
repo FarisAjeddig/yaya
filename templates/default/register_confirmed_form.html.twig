@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}<br>
+    {% form_theme form 'bootstrap_4_layout.html.twig' %}
+    {#{{ form(form) }}#}
+    {{ form_start(form, {'action': url('FormRegisterConfirmed')}) }}
+
+    {{ form_errors(form) }}
+
+    <div class="container-fluid row">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-4">
+            <h2 class="center">Dîtes-nous en plus sur vous</h2>
+            <div class="row">
+                <div class="col">
+                    {{ form_row(form.phone_number, { 'attr' : { 'maxlength' : 12, 'minlength' : 10}}) }}
+                </div>
+            </div>
+            {{ form_row(form.Envoyer, {'attr' : {'class' : 'btn-block btn-primary' }}) }}
+            {{ form_end(form) }}
+        </div>
+        <div class="col-lg-3"></div>
+    </div>
+
+{% endblock %}

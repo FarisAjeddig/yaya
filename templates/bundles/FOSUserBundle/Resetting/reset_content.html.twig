@@ -1,0 +1,26 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<div class="bradcam_area bradcam_bg_3">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="bradcam_text">
+                    <h3>Réinitialiser son mot de passe</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid row p-5">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        {% form_theme form 'bootstrap_4_layout.html.twig' %}
+        {{ form_start(form, { 'action': path('fos_user_resetting_reset', {'token': token}), 'attr': { 'class': 'fos_user_resetting_reset' } }) }}
+            {{ form_widget(form) }}
+            <div>
+                <input type="submit" class="form-control btn btn-primary outline" value="{{ 'resetting.reset.submit'|trans }}" />
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>

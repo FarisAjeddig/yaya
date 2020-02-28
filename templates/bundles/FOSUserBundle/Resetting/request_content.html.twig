@@ -1,0 +1,28 @@
+{% trans_default_domain 'FOSUserBundle' %}
+<div class="bradcam_area bradcam_bg_3">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="bradcam_text">
+                    <h3>Réinitialiser son mot de passe</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid row p-5">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <form action="{{ path('fos_user_resetting_send_email') }}" method="POST" class="fos_user_resetting_request">
+            <div>
+                <label for="username" style="font-size: 18px">Adresse mail</label>
+                <input type="text" class="form-control" id="username" name="username" required="required" />
+            </div>
+            <br>
+            <div>
+                <input type="submit" class="form-control btn btn-primary outline" value="{{ 'resetting.request.submit'|trans }}" />
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+{% trans_default_domain 'FOSUserBundle' %}
+<div class="bradcam_area bradcam_bg_3">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="bradcam_text">
+                    <h3>Modifier mes informations</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid row p-5">
+    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+        {% form_theme form 'bootstrap_4_layout.html.twig' %}
+        {{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
+
+        {{ form_label(form.username, 'Nom et prénom', {label_attr: {style: 'font-size: 18px'} }) }}
+        {{ form_widget(form.username) }}
+        {{ form_errors(form.username) }}<br>
+
+        {{ form_label(form.email, 'Adresse mail', {label_attr: {style: 'font-size: 18px'} }) }}
+        {{ form_widget(form.email) }}
+        {{ form_errors(form.email) }}<br>
+
+        {{ form_label(form.current_password, 'Mot de passe', {label_attr: {style: 'font-size: 18px'} }) }}
+        {{ form_widget(form.current_password) }}
+        {{ form_errors(form.current_password) }}<br>
+
+        <div>
+            <input type="submit" class="form-control btn-success btn-block" value="{{ 'profile.edit.submit'|trans }}" />
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+
+

@@ -1,0 +1,26 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Réinitialiser son mot de passe</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid row p-5">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <p style="font-size: 20px;">
+                Un e-mail a été envoyé. Il contient un lien sur lequel il vous faudra cliquer pour réinitialiser votre mot de passe.
+                <br>
+            </p>
+        </div>
+    </div>
+{% endblock %}
