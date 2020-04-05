@@ -106,6 +106,17 @@
       <path value="$PROJECT_DIR$/vendor/jdorn/sql-formatter" />
       <path value="$PROJECT_DIR$/vendor/zendframework/zend-eventmanager" />
       <path value="$PROJECT_DIR$/vendor/zendframework/zend-code" />
+      <path value="$PROJECT_DIR$/vendor/swiftmailer/swiftmailer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/swiftmailer-bundle" />
+      <path value="$PROJECT_DIR$/vendor/symfony/web-server-bundle" />
+      <path value="$PROJECT_DIR$/../vendor/misd/phone-number-bundle" />
+      <path value="$PROJECT_DIR$/../vendor/symfony/templating" />
+      <path value="$PROJECT_DIR$/../vendor/friendsofsymfony/user-bundle" />
+      <path value="$PROJECT_DIR$/../vendor/symfony/webpack-encore-bundle" />
+      <path value="$PROJECT_DIR$/../vendor/symfony/google-mailer" />
+      <path value="$PROJECT_DIR$/../vendor/giggsey/libphonenumber-for-php" />
+      <path value="$PROJECT_DIR$/../vendor/giggsey/locale" />
+      <path value="$PROJECT_DIR$/../vendor/tetranz/select2entity-bundle" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />

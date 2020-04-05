@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Ajout d'un type de médecin</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div class="container-fluid row">
+        <div class="col-lg-5"></div>
+        <div class="col-lg-2 text-center">
+            {% form_theme form 'bootstrap_4_layout.html.twig' %}
+            {{ form(form) }}
+        </div>
+    </div>
+{% endblock %}

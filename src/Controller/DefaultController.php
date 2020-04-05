@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Country;
+use App\Entity\TypeDoctor;
 use App\Entity\User;
 use App\Form\DoctorType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,8 +24,11 @@ class DefaultController extends AbstractController
      */
     public function indexAction()
     {
+        $typesDoctor = $this->getDoctrine()->getRepository(TypeDoctor::class)->findAll();
+        $countrys = $this->getDoctrine()->getRepository(Country::class)->findAll();
         return $this->render('default/index.html.twig', [
-            'controller_name' => 'DefaultController',
+            'typesDoctor' => $typesDoctor,
+            'countrys' => $countrys
         ]);
     }
 
@@ -134,6 +139,7 @@ class DefaultController extends AbstractController
 
     /** @Route("/profile/info/doctor", name="info_doctor") */
     public function infoDoctorAction(Request $request){
+        /** @var User $user */
         $user = $this->getUser();
 
         $form = $this->createFormBuilder($user)
@@ -142,7 +148,10 @@ class DefaultController extends AbstractController
                     'Médecin généraliste' => 'Médecin généraliste',
                     'Kinésitérapeute' => 'Kinésitérapeute'
                 ],
-                'label' => 'Type de médecin'
+                'placeholder' => "Type de médecin",
+                'multiple' => true,
+                'label' => 'Type de médecin',
+                'attr' => ['class' => 'js-example-basic-multiple']
             ])
             ->add("diploma", TextareaType::class, [
                 'label' => "Vos qualifications (diplômes, etc.)",
@@ -167,7 +176,7 @@ class DefaultController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('POST')){
-//            dd($user);;
+            dd($user->getTypeDoctor());;
             $url = 'https://maps.googleapis.com/maps/api/geocode/json?';
             $options = array("address"=>$user->getAdress(),"key"=>"AIzaSyAuZviasKN0VON99Nz4I8b_tu6YZDcmrsw");
             $url .= http_build_query($options,'','&');

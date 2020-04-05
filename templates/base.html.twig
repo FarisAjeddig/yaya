@@ -8,6 +8,7 @@
 
 {#        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">#}
         {% block stylesheets %}
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
             {{ encore_entry_link_tags('app') }}
             <style>
                 * {
@@ -37,7 +38,7 @@
                                                 <ul id="navigation">
                                                     <li><a href="{{ url('homepage') }}">Accueil</a></li>
                                                     <li><a href="{{ url('fos_user_security_login') }}">Connexion</a></li>
-                                                    <li><a href="{{ url('register_doctor') }}">Je suis médecin</a></li>
+{#                                                    <li><a href="{{ url('register_doctor') }}">Je suis médecin</a></li>#}
 {#                                                    <li><a href="#">pages <i class="ti-angle-down"></i></a>#}
 {#                                                        <ul class="submenu">#}
 {#                                                            <li><a href="#">apply loan</a></li>#}
@@ -59,10 +60,10 @@
                                     <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                                         <div class="Appointment">
                                             <div class="phone_num d-none d-xl-block">
-                                                <a href="#"> <i class="fa fa-phone"></i> +10 673 567 367</a>
+                                                <a href="#"> <i class="fa fa-phone"></i> +336 66 66 66 66</a>
                                             </div>
                                             <div class="d-none d-lg-block">
-                                                <a class="boxed-btn4" href="#">Apply for a Loan</a>
+                                                <a class="boxed-btn4" href="{{ url('register_doctor') }}">Je suis médecin</a>
                                             </div>
                                         </div>
                                     </div>
@@ -80,7 +81,16 @@
         {% block body %}
         {% endblock %}
         {% block javascripts %}
+            <script src="https://kit.fontawesome.com/d63d6c8cb5.js" crossorigin="anonymous"></script>
             {{ encore_entry_script_tags('app') }}
+            <script
+                    src="https://code.jquery.com/jquery-3.4.1.min.js"
+                    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+                    crossorigin="anonymous"></script>
+            <script>
+                jQuery = $
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         {% endblock %}
     </body>
 </html>
