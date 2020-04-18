@@ -31,19 +31,26 @@ import './popper.min.js';
 import './bootstrap.min.js';
 import './owl.carousel.min.js';
 import './isotope.pkgd.min.js';
-import './ajax-form';
+import './ajax-form.js';
 import './waypoints.min.js';
 import './jquery.counterup.min.js';
 import './imagesloaded.pkgd.min.js';
-import './scrollIt';
+import './scrollIt.js';
 import './jquery.scrollUp.min.js';
 import './wow.min.js';
 import './nice-select.min.js';
 import './jquery.slicknav.min.js';
 import './jquery.magnific-popup.min.js';
-import './plugins';
+import './plugins.js';
 import './gijgo.min.js';
 import './slick.min.js';
+
+import './contact.js';
+import './jquery.ajaxchimp.min.js';
+import './jquery.form.js';
+import './jquery.validate.min.js';
+import './mail-script.js';
+import './main.js';
 
 
 console.log('Hello Webpack Encore! Edit me in assets/js/app.js');

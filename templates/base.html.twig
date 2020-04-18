@@ -2,13 +2,14 @@
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Afromed{% endblock %}</title>
         <meta name="description" content="Description du site de yaya">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
 {#        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">#}
         {% block stylesheets %}
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+{#            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">#}
+            <!-- CSS here -->
             {{ encore_entry_link_tags('app') }}
             <style>
                 * {
@@ -81,16 +82,45 @@
         {% block body %}
         {% endblock %}
         {% block javascripts %}
-            <script src="https://kit.fontawesome.com/d63d6c8cb5.js" crossorigin="anonymous"></script>
-            {{ encore_entry_script_tags('app') }}
-            <script
-                    src="https://code.jquery.com/jquery-3.4.1.min.js"
-                    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-                    crossorigin="anonymous"></script>
-            <script>
-                jQuery = $
-            </script>
-            <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+{#            <script src="https://kit.fontawesome.com/d63d6c8cb5.js" crossorigin="anonymous"></script>#}
+{#            {{ encore_entry_script_tags('app') }}#}
+
+            <script src="{{'build/js/vendor/modernizr-3.5.0.min.js'}}"></script>
+            <script src="{{'build/js/vendor/jquery-1.12.4.min.js'}}"></script>
+            <script src="{{'build/js/popper.min.js'}}"></script>
+            <script src="{{'build/js/bootstrap.min.js' }}"></script>
+            <script src="{{'build/js/owl.carousel.min.js' }}"></script>
+            <script src="{{'build/js/isotope.pkgd.min.js' }}"></script>
+            <script src="{{'build/js/ajax-form.js' }}"></script>
+            <script src="{{'build/js/waypoints.min.js' }}"></script>
+            <script src="{{'build/js/jquery.counterup.min.js' }}"></script>
+            <script src="{{'build/js/imagesloaded.pkgd.min.js' }}"></script>
+            <script src="{{'build/js/scrollIt.js' }}"></script>
+            <script src="{{'build/js/jquery.scrollUp.min.js' }}"></script>
+            <script src="{{'build/js/wow.min.js' }}"></script>
+            <script src="{{'build/js/nice-select.min.js' }}"></script>
+            <script src="{{'build/js/jquery.slicknav.min.js' }}"></script>
+            <script src="{{'build/js/jquery.magnific-popup.min.js' }}"></script>
+            <script src="{{'build/js/plugins.js' }}"></script>
+            <script src="{{'build/js/gijgo.min.js' }}"></script>
+            <script src="{{'build/js/slick.min.js' }}"></script>
+
+            <!--contact js-->
+            <script src="{{'build/js/contact.js'}}"></script>
+            <script src="{{'build/js/jquery.ajaxchimp.min.js'}}"></script>
+            <script src="{{'build/js/jquery.form.js'}}"></script>
+            <script src="{{'build/js/jquery.validate.min.js'}}"></script>
+            <script src="{{'build/js/mail-script.js'}}"></script>
+            <script src="{{'build/js/main.js'}}"></script>
+
+{#            <script#}
+{#                    src="https://code.jquery.com/jquery-3.4.1.min.js"#}
+{#                    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="#}
+{#                    crossorigin="anonymous"></script>#}
+{#            <script>#}
+{#                jQuery = $#}
+{#            </script>#}
+{#            <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>#}
         {% endblock %}
     </body>
 </html>

@@ -60,6 +60,21 @@ Encore
     ]))
 
 
+    // CSS & JS & SCSS & Fonts
+    .addPlugin(new CopyWebpackPlugin([
+        { from: './assets/css', to: 'css' }
+    ]))
+    .addPlugin(new CopyWebpackPlugin([
+        { from: './assets/js', to: 'js' }
+    ]))
+    .addPlugin(new CopyWebpackPlugin([
+        { from: './assets/scss', to: 'scss' }
+    ]))
+    .addPlugin(new CopyWebpackPlugin([
+        { from: './assets/fonts', to: 'fonts' }
+    ]))
+
+
     // enables Sass/SCSS support
     //.enableSassLoader()
 
