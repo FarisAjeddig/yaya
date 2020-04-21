@@ -19,9 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {
-    /**
-     * @Route("/", name="homepage")
-     */
+    /** @Route("/", name="homepage") */
     public function indexAction()
     {
         $typesDoctor = $this->getDoctrine()->getRepository(TypeDoctor::class)->findAll();
@@ -32,9 +30,7 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/formRegisterConfirmed", name="FormRegisterConfirmed")
-     */
+    /** @Route("/formRegisterConfirmed", name="FormRegisterConfirmed") */
     public function FormRegisterConfirmedAction(Request $request){
         $user = $this->getUser();
 
@@ -60,9 +56,7 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profile/edit/phone", name="profile_edit_phone")
-     */
+    /** @Route("/profile/edit/phone", name="profile_edit_phone") */
     public function profileEditAction(Request $request){
         $user = $this->getUser();
 
@@ -89,9 +83,7 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/register/doctor", name="register_doctor")
-     */
+    /** @Route("/register/doctor", name="register_doctor") */
     public function registerDoctorAction(Request $request){
         $doc = new User();
         $form = $this->createForm(DoctorType::class, $doc);
