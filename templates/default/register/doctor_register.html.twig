@@ -12,11 +12,125 @@
             </div>
         </div>
     </div>
-    <div class="container-fluid row p-5">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
-        {% form_theme form 'bootstrap_4_layout.html.twig' %}
-        {{ form(form) }}
+
+    <div class="service_area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section_title text-center mb-90">
+                        <span class="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".1s"></span>
+                        <h3 class="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".2s">Vous êtes médecin ?</h3>
+                        <p class="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".3s">Nous vous contacterons rapidement après votre inscription pour la finaliser.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="single_service wow fadeInLeft" data-wow-duration="1.2s" data-wow-delay=".5s">
+                        <div class="service_icon_wrap text-center">
+                            <div class="service_icon ">
+                                <img src="{{ '/build/images/svg_icon/service_1.png' }}" alt="">
+                            </div>
+                        </div>
+                        <div class="info text-center">
+                            <span>Paiement garanti</span>
+{#                            <h3>$3000-$10000</h3>#}
+                        </div>
+                        <div class="service_content">
+                            <ul>
+                                <li>Sur votre compte bancaire</li>
+                                <li>-</li>
+                                <li>-</li>
+                                <li>-</li>
+                            </ul>
+{#                            <div class="apply_btn">#}
+{#                                <button class="boxed-btn3" type="submit">Apply Now</button>#}
+{#                            </div>#}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single_service wow fadeInUp" data-wow-duration="1s" data-wow-delay=".3s">
+                        <div class="service_icon_wrap text-center">
+                            <div class="service_icon ">
+                                <img src="{{ '/build/images/svg_icon/service_timemoney.svg' }}" height="68px" alt="">
+                            </div>
+                        </div>
+                        <div class="info text-center">
+                            <span>Économie de temps</span>
+{#                            <h3>$3000-$10000</h3>#}
+                        </div>
+                        <div class="service_content">
+                            <ul>
+                                <li>Rendez-vous pris en ligne</li>
+                                <li>-</li>
+                                <li>-</li>
+                                <li>-</li>
+                            </ul>
+{#                            <div class="apply_btn">#}
+{#                                <button class="boxed-btn3" type="submit">Apply Now</button>#}
+{#                            </div>#}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single_service wow fadeInRight" data-wow-duration="1.2s" data-wow-delay=".5s">
+                        <div class="service_icon_wrap text-center">
+                            <div class="service_icon ">
+                                <img src="{{ '/build/images/svg_icon/service_3.png' }}" alt="">
+                            </div>
+                        </div>
+                        <div class="info text-center">
+                            <span>3e avantage</span>
+{#                            <h3>$3000-$10000</h3>#}
+                        </div>
+                        <div class="service_content">
+                            <ul>
+                                <li>-</li>
+                                <li>-</li>
+                                <li>-</li>
+                                <li>-</li>
+                            </ul>
+{#                            <div class="apply_btn">#}
+{#                                <button class="boxed-btn3" type="submit">Apply Now</button>#}
+{#                            </div>#}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <div class="container-fluid row">
+
+        <div class="col-xl-1"></div>
+        <div class="col-xl-10 row">
+            <div class="col-xl-5 offset-1 apply_form_area" style="padding-top: inherit">
+                <div class="apply_form">
+                    <h3>Pas de compte ?</h3>
+                    <h4 class="text-center">Inscription</h4>
+                    {% form_theme form 'bootstrap_4_layout.html.twig' %}
+                    {{ form(form) }}
+                </div>
+            </div>
+            <div class="col-xl-5 offset-1 apply_form_area" style="padding-top: inherit">
+                <form action="{{ path("fos_user_security_check") }}" class="form-group apply_form" method="post">
+                    <h3>Déjà un compte ?</h3>
+                    <h4 class="text-center">Connexion</h4>
+                    <label for="username" style="font-size: 18px">Adresse mail</label>
+                    <input type="text" class="form-control" id="username" name="_username" value="" required="required" autocomplete="username" />
+                    <br>
+                    <label for="password" style="font-size: 18px">Mot de passe</label>
+                    <input type="password" class="form-control" id="password" name="_password" required="required" autocomplete="current-password" />
+                    <div class="text-right"><a href="{{ url('fos_user_resetting_request') }}" class="text-danger">Mot de passe oublié</a></div>
+                    <br><br>
+                    {#            <input type="checkbox" class="form-control" id="remember_me" name="_remember_me" value="on" />#}
+                    {#            <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>#}
+
+                    <input type="submit" class="form-control genric-btn success btn-block" id="_submit" name="_submit" value="Connexion" />
+                </form>
+            </div>
+        </div>
+
     </div>
 {% endblock %}

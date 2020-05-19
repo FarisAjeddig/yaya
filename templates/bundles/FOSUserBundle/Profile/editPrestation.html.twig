@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Modification de {{ prestation.name }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><br><br>
+    {% form_theme form 'bootstrap_4_layout.html.twig' %}
+    <div class="row">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4">
+            {{ form(form) }}
+        </div>
+        <div class="col-lg-4"></div>
+    </div>
+{% endblock %}

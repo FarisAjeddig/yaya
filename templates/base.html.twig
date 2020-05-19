@@ -14,10 +14,11 @@
             <style>
                 * {
                     text-transform: none !important;
+                    /*overflow-x: hidden;*/
                 }
             </style>
             <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-            <script src="{{'build/js/vendor/jquery-1.12.4.min.js'}}"></script>
+            <script src="{{'/build/js/vendor/jquery-1.12.4.min.js'}}"></script>
             <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
         {% endblock %}
     </head>
@@ -32,7 +33,7 @@
                                     <div class="col-xl-3 col-lg-2">
                                         <div class="logo">
                                             <a href="{{ url('homepage') }}">
-                                                <img src="{{ '/build/images/logo.png' }}" alt="">
+                                                <img src="{{ '/build/images/logo.png' }}" alt="Logo Afromed" style="height: 30%; width: 30%">
                                             </a>
                                         </div>
                                     </div>
@@ -88,32 +89,32 @@
 {#            <script src="https://kit.fontawesome.com/d63d6c8cb5.js" crossorigin="anonymous"></script>#}
 {#            {{ encore_entry_script_tags('app') }}#}
 
-            <script src="{{'build/js/vendor/modernizr-3.5.0.min.js'}}"></script>
-            <script src="{{'build/js/popper.min.js'}}"></script>
-            <script src="{{'build/js/bootstrap.min.js' }}"></script>
-            <script src="{{'build/js/owl.carousel.min.js' }}"></script>
-            <script src="{{'build/js/isotope.pkgd.min.js' }}"></script>
-            <script src="{{'build/js/ajax-form.js' }}"></script>
-            <script src="{{'build/js/waypoints.min.js' }}"></script>
-            <script src="{{'build/js/jquery.counterup.min.js' }}"></script>
-            <script src="{{'build/js/imagesloaded.pkgd.min.js' }}"></script>
-            <script src="{{'build/js/scrollIt.js' }}"></script>
-            <script src="{{'build/js/jquery.scrollUp.min.js' }}"></script>
-            <script src="{{'build/js/wow.min.js' }}"></script>
-            <script src="{{'build/js/nice-select.min.js' }}"></script>
-            <script src="{{'build/js/jquery.slicknav.min.js' }}"></script>
-            <script src="{{'build/js/jquery.magnific-popup.min.js' }}"></script>
-            <script src="{{'build/js/plugins.js' }}"></script>
-            <script src="{{'build/js/gijgo.min.js' }}"></script>
-            <script src="{{'build/js/slick.min.js' }}"></script>
+            <script src="{{'/build/js/vendor/modernizr-3.5.0.min.js'}}"></script>
+            <script src="{{'/build/js/popper.min.js'}}"></script>
+            <script src="{{'/build/js/bootstrap.min.js' }}"></script>
+            <script src="{{'/build/js/owl.carousel.min.js' }}"></script>
+            <script src="{{'/build/js/isotope.pkgd.min.js' }}"></script>
+            <script src="{{'/build/js/ajax-form.js' }}"></script>
+            <script src="{{'/build/js/waypoints.min.js' }}"></script>
+            <script src="{{'/build/js/jquery.counterup.min.js' }}"></script>
+            <script src="{{'/build/js/imagesloaded.pkgd.min.js' }}"></script>
+            <script src="{{'/build/js/scrollIt.js' }}"></script>
+            <script src="{{'/build/js/jquery.scrollUp.min.js' }}"></script>
+            <script src="{{'/build/js/wow.min.js' }}"></script>
+            <script src="{{'/build/js/nice-select.min.js' }}"></script>
+            <script src="{{'/build/js/jquery.slicknav.min.js' }}"></script>
+            <script src="{{'/build/js/jquery.magnific-popup.min.js' }}"></script>
+            <script src="{{'/build/js/plugins.js' }}"></script>
+            <script src="{{'/build/js/gijgo.min.js' }}"></script>
+            <script src="{{'/build/js/slick.min.js' }}"></script>
 
             <!--contact js-->
-            <script src="{{'build/js/contact.js'}}"></script>
-            <script src="{{'build/js/jquery.ajaxchimp.min.js'}}"></script>
-            <script src="{{'build/js/jquery.form.js'}}"></script>
-            <script src="{{'build/js/jquery.validate.min.js'}}"></script>
-            <script src="{{'build/js/mail-script.js'}}"></script>
-            <script src="{{'build/js/main.js'}}"></script>
+            <script src="{{'/build/js/contact.js'}}"></script>
+            <script src="{{'/build/js/jquery.ajaxchimp.min.js'}}"></script>
+            <script src="{{'/build/js/jquery.form.js'}}"></script>
+            <script src="{{'/build/js/jquery.validate.min.js'}}"></script>
+            <script src="{{'/build/js/mail-script.js'}}"></script>
+            <script src="{{'/build/js/main.js'}}"></script>
 
 {#            <script#}
 {#                    src="https://code.jquery.com/jquery-3.4.1.min.js"#}

@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Suppression de {{ prestation.name }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><br><br>
+    <div class="row">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4" style="border: solid 1px;">
+            <div class="row" style="text-align: left; padding: 15px;">
+                <div class="col-lg-3"><b>{{ prestation.price }} €</b></div>
+                <div class="col-lg-6 text-center">
+                    <b>{{ prestation.name }}</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">{{ prestation.description }}</div>
+            </div><br>
+        </div>
+    </div><br><br>
+    <div class="text-center">
+        <a href="{{ url('delete_prestation_confirm', {id: prestation.id}) }}" class="btn btn-danger text-center">Confirmer la suppression</a>
+    </div>
+
+{% endblock %}

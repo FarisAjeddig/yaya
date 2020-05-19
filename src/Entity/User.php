@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -23,11 +25,6 @@ class User extends BaseUser
      * @ORM\Column(name="is_doctor", type="boolean", nullable=true)
      */
     public $is_doctor = false;
-
-    /**
-     * @ORM\Column(name="type_doctor", type="string", nullable=true)
-     */
-    public $type_doctor;
 
     /**
      * @ORM\Column(name="diploma", type="string", nullable=true)
@@ -63,13 +60,20 @@ class User extends BaseUser
     private $latAdress;
 
 
-    /** @ORM\Column(name="price", type="float", nullable=true) */
-    public $price;
-
     /**
      * @ORM\Column(name="description", type="text", nullable=true)
      */
     protected $desc;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\TypeDoctor", inversedBy="doctors")
+     */
+    public $type_doctor;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Prestation", mappedBy="doctor")
+     */
+    private $prestations;
 
     /**
      * @return float
@@ -133,22 +137,6 @@ class User extends BaseUser
     public function setAdress($adress): void
     {
         $this->adress = $adress;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param mixed $price
-     */
-    public function setPrice($price): void
-    {
-        $this->price = $price;
     }
 
     /**
@@ -235,6 +223,62 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
+        $this->type_doctor = new ArrayCollection();
+        $this->prestations = new ArrayCollection();
         // your own logic
+    }
+
+    public function addTypeDoctor(TypeDoctor $typeDoctor): self
+    {
+        if (!$this->type_doctor->contains($typeDoctor)) {
+            $this->type_doctor[] = $typeDoctor;
+            $typeDoctor->addDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTypeDoctor(TypeDoctor $typeDoctor): self
+    {
+        if ($this->type_doctor->contains($typeDoctor)) {
+            $this->type_doctor->removeElement($typeDoctor);
+            // set the owning side to null (unless already changed)
+            if ($typeDoctor->getDoctors() === $this) {
+//                $typeDoctor->setDoctors(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Prestation[]
+     */
+    public function getPrestations(): Collection
+    {
+        return $this->prestations;
+    }
+
+    public function addPrestation(Prestation $prestation): self
+    {
+        if (!$this->prestations->contains($prestation)) {
+            $this->prestations[] = $prestation;
+            $prestation->setDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrestation(Prestation $prestation): self
+    {
+        if ($this->prestations->contains($prestation)) {
+            $this->prestations->removeElement($prestation);
+            // set the owning side to null (unless already changed)
+            if ($prestation->getDoctor() === $this) {
+                $prestation->setDoctor(null);
+            }
+        }
+
+        return $this;
     }
 }
