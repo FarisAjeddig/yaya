@@ -1,20 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SearchDoctorController!{% endblock %}
+{% block title %}{{ parent() }}{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>{{ typeDoctor.name }} à {{ city.name }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/faris/Bureau/yaya/src/Controller/SearchDoctorController.php'|file_link(0) }}">src/Controller/SearchDoctorController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/faris/Bureau/yaya/templates/search_doctor/index.html.twig'|file_link(0) }}">templates/search_doctor/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <div class="container-fluid row" style="background-color: #eef2f6; padding-top: 3%; padding-bottom: 3%;">
+        {% for doctor in doctors %}
+            <div class="col-lg-5 col-md-5 col-sm-10" style="background-color: #ffffff; border: solid 1px #d4dde8; border-radius: 5px; margin-left: 4%; margin-right: 4%; margin-bottom: 2%">
+                <div class="row">
+                    <div class="col-sm-6" style="padding-top: 2%;">
+                        <h3 class="text-center" >Dr. {{ doctor.username }}</h3><br>
+                        <b>Description : </b><p class="text-center">{{ doctor.desc }}</p><br>
+                        <b>Diplômes : </b><p class="text-center">{{ doctor.diploma }}</p><br>
+                        <p>Consultation à partir de 35€</p><br>
+                        <p style="text-align: center">
+                            <a href="{{ url('doctor_profile', {id: doctor.id}) }}" class="btn btn-success">Voir plus</a>
+                        </p>
+                    </div>
+                    <div class="col-sm-6" style="padding: 0 !important;">
+                        <img src="{{ '/build/images/doctor-single.jpg' }}" height="auto" width="100%" alt="Photo de {{ doctor.username }}">
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

@@ -27,6 +27,11 @@ class City
      */
     private $country;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="city")
+     */
+    private $users;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +57,18 @@ class City
     public function setCountry(?Country $country): self
     {
         $this->country = $country;
+
+        return $this;
+    }
+
+    public function getUsers(): ?User
+    {
+        return $this->users;
+    }
+
+    public function setUsers(?User $users): self
+    {
+        $this->users = $users;
 
         return $this;
     }

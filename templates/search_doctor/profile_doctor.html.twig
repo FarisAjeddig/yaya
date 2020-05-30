@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Dr. {{ doctor.username }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid row">
+        <div class="col-md-4">
+            <img src="{{ '/build/images/doctor-single.jpg' }}" height="auto" width="100%" alt="Photo de {{ doctor.username }}">
+        </div>
+        <div class="col-md-4" style="padding-top: 1%;">
+            <h2>Dr. {{ doctor.username }}</h2><br>
+            <b><i class="fa fa-certificate"> </i> Spécialités : </b><br><br>
+            {% for specialty in doctor.typeDoctor %}
+                <span style="margin: 10px 10px 0 0; padding: 8px 8px; background-color: #eef2f6; border-radius: 4px;">{{ specialty.name }}</span>
+            {% endfor %}
+            <br><br>
+            <b><i class="fa fa-address-book"> </i> Adresse des consultations : </b><br><br>
+            {{ doctor.adress }}<br><br>
+            <div style="width: auto"><iframe width="100%" height="auto" src="https://maps.google.com/maps?width=100%&height=600&hl=fr&coord={{ doctor.latAdress }},{{doctor.longAdress}}&q={{ doctor.adress }}&ie=UTF8&t=&z=14&iwloc=B&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"><a href="https://www.mapsdirections.info/en/measure-map-radius/">Draw Map Circle</a></iframe></div><br />
+
+            <b><i class="fa fa-graduation-cap"> </i> Diplômes : </b><br><br>
+            {{ doctor.diploma }}<br><br>
+
+            <b><i class="fa fa-info-circle"> </i> Informations complémentaires </b><br><br>
+            {{ doctor.desc }}
+        </div>
+        <div class="col-md-4" style="padding-top: 1%;">
+            <h2 class="text-center">Les consultations</h2><br>
+            {% for prestation in doctor.prestations %}
+                <div class="row" style="padding-bottom: 5px; text-align: left;">
+                    <div class="col-lg-3"><b>{{ prestation.price }} €</b></div>
+                    <div class="col-lg-6 text-center">
+                        <b>{{ prestation.name }}</b>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">{{ prestation.description }}</div>
+                </div><br>
+                <p class="text-center">
+                    <a href="{{ url('reserver_rendez_vous', {idDoctor: doctor.id, idPrestation: prestation.id}) }}" class="btn btn-success">Prendre rendez-vous</a>
+                </p><br>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

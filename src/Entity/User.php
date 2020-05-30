@@ -45,6 +45,7 @@ class User extends BaseUser
     /** @ORM\Column(name="adress", type="string", nullable=true) */
     public $adress;
 
+
     /**
      * @var float
      *
@@ -74,6 +75,11 @@ class User extends BaseUser
      * @ORM\OneToMany(targetEntity="App\Entity\Prestation", mappedBy="doctor")
      */
     private $prestations;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\City", mappedBy="users")
+     */
+    private $city;
 
     /**
      * @return float
@@ -225,6 +231,7 @@ class User extends BaseUser
         parent::__construct();
         $this->type_doctor = new ArrayCollection();
         $this->prestations = new ArrayCollection();
+        $this->city = new ArrayCollection();
         // your own logic
     }
 
@@ -276,6 +283,37 @@ class User extends BaseUser
             // set the owning side to null (unless already changed)
             if ($prestation->getDoctor() === $this) {
                 $prestation->setDoctor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|City[]
+     */
+    public function getCity(): Collection
+    {
+        return $this->city;
+    }
+
+    public function addCity(City $city): self
+    {
+        if (!$this->city->contains($city)) {
+            $this->city[] = $city;
+            $city->setUsers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCity(City $city): self
+    {
+        if ($this->city->contains($city)) {
+            $this->city->removeElement($city);
+            // set the owning side to null (unless already changed)
+            if ($city->getUsers() === $this) {
+                $city->setUsers(null);
             }
         }
 

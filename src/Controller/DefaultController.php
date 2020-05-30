@@ -156,6 +156,8 @@ class DefaultController extends AbstractController
             $types[$type->getName()] = $type->getId();
         }
 
+        $countrys = $this->getDoctrine()->getRepository(Country::class)->findAll();
+
         $form = $this->createFormBuilder($user)
             ->add("types", ChoiceType::class, [
                 'choices' => $types,
@@ -174,6 +176,10 @@ class DefaultController extends AbstractController
             ])
             ->add("adress", TextType::class, [
                 'label' => "Adresse des consultation"
+            ])
+            ->add("city", ChoiceType::class, [
+                'choices' => $countrys,
+                'attr' => ['class' => 'js-example-basic-multiple']
             ])
             ->add("desc", TextareaType::class, [
                 "label" => "Informations complémentaires",
@@ -225,7 +231,8 @@ class DefaultController extends AbstractController
         return $this->render('bundles/FOSUserBundle/Profile/infoDoctor.html.twig', [
             'form' => $form->createView(),
             'formPrestation' => $formPrestation->createView(),
-            'user' => $user
+            'user' => $user,
+            'countrys' => $countrys
             ]);
     }
 

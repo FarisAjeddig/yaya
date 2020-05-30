@@ -17,6 +17,7 @@
                     /*overflow-x: hidden;*/
                 }
             </style>
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
             <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
             <script src="{{'/build/js/vendor/jquery-1.12.4.min.js'}}"></script>
             <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
@@ -42,31 +43,33 @@
                                             <nav>
                                                 <ul id="navigation">
                                                     <li><a href="{{ url('homepage') }}">Accueil</a></li>
-                                                    <li><a href="{{ url('fos_user_security_login') }}">Connexion</a></li>
 {#                                                    <li><a href="{{ url('register_doctor') }}">Je suis médecin</a></li>#}
-{#                                                    <li><a href="#">pages <i class="ti-angle-down"></i></a>#}
-{#                                                        <ul class="submenu">#}
-{#                                                            <li><a href="#">apply loan</a></li>#}
-{#                                                            <li><a href="#">elements</a></li>#}
-{#                                                        </ul>#}
-{#                                                    </li>#}
+                                                    {% if app.user.id is defined %}
+                                                    <li><a href="#">Mes informations <i class="ti-angle-down"></i></a>
+                                                        <ul class="submenu">
+                                                            <li><a href="{{ url('fos_user_profile_show') }}">Mon profil</a></li>
+                                                            <li><a href="#">Mes rendez-vous</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    {% endif %}
+                                                    {% if app.user.id is not defined %}
+                                                        <li><a href="{{ url('fos_user_security_login') }}">Connexion</a></li>
+                                                    {% endif %}
 {#                                                    <li><a href="#">blog <i class="ti-angle-down"></i></a>#}
 {#                                                        <ul class="submenu">#}
 {#                                                            <li><a href="#">blog</a></li>#}
 {#                                                            <li><a href="#">single-blog</a></li>#}
 {#                                                        </ul>#}
 {#                                                    </li>#}
-                                                    <li><a href="{{ url('fos_user_profile_show') }}">Profil</a></li>
-                                                    <li><a href="{{ url('fos_user_registration_register') }}">Inscription</a></li>
                                                 </ul>
                                             </nav>
                                         </div>
                                     </div>
                                     <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                                         <div class="Appointment">
-                                            <div class="phone_num d-none d-xl-block">
-                                                <a href="#"> <i class="fa fa-phone"></i> +336 66 66 66 66</a>
-                                            </div>
+{#                                            <div class="phone_num d-none d-xl-block">#}
+{#                                                <a href="#"> <i class="fa fa-phone"></i> +336 66 66 66 66</a>#}
+{#                                            </div>#}
                                             <div class="d-none d-lg-block">
                                                 <a class="boxed-btn4" href="{{ url('register_doctor') }}">Je suis médecin</a>
                                             </div>
