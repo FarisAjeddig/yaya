@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>{{ prestation.name }} avec Dr. {{ doctor.username }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid row">
+        <div class="col-md-1"></div>
+        <div class="col-md-4 text-center" style="padding-top: 1%">
+            <h2>{{ prestation.name }} avec Dr. {{ doctor.username }}</h2>
+            <p>{{ prestation.description }}</p>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5" style="padding-top: 1%">
+            <h2 class="text-center">Organiser un rendez-vous pour un proche</h2>
+            {{ form_start(form, {'action': url('reserver_rendez_vous', {idDoctor: doctor.id, idPrestation: prestation.id})}) }}
+
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_label(form.phoneNumberPatient)}}
+                    {{ form_widget(form.phoneNumberPatient, {'attr': {'class': 'single-input', 'placeholder': "+336 12 34 56 78"}} ) }}
+                    {{ form_errors(form.phoneNumberPatient) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.emailPatient)}}
+                    {{ form_widget(form.emailPatient, {'attr': {'class': 'single-input', 'placeholder': "example@afromed.co"}} ) }}
+                    {{ form_errors(form.emailPatient) }}
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    {{ form_label(form.schedulePatient) }}<p style="font-size: 12px">Le médecin lui proposera ensuire un créneau</p>
+                    {{ form_widget(form.schedulePatient, {'attr': {'class': 'single-textarea', 'placeholder': 'Disponibilités du patient'}}) }}
+                    {{ form_errors(form.schedulePatient) }}
+                </div>
+            </div>
+
+            <span class="text-center">
+                {{ form_row(form.Reserver, {'attr': {'class' : 'genric-btn info circle arrow'}, label: 'Réserver'}) }}
+            </span>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+
+
+{% endblock %}

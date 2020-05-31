@@ -82,6 +82,21 @@ class User extends BaseUser
     private $city;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Appointment", mappedBy="buyer")
+     */
+    private $appointmentAsBuyer;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Appointment", mappedBy="patient")
+     */
+    private $appointmentAsPatient;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Appointment", mappedBy="doctor")
+     */
+    private $appointmentAsDoctor;
+
+    /**
      * @return float
      */
     public function getLongAdress(): float
@@ -232,6 +247,9 @@ class User extends BaseUser
         $this->type_doctor = new ArrayCollection();
         $this->prestations = new ArrayCollection();
         $this->city = new ArrayCollection();
+        $this->appointmentAsBuyer = new ArrayCollection();
+        $this->appointmentAsPatient = new ArrayCollection();
+        $this->appointmentAsDoctor = new ArrayCollection();
         // your own logic
     }
 
@@ -319,4 +337,98 @@ class User extends BaseUser
 
         return $this;
     }
+
+    /**
+     * @return Collection|Appointment[]
+     */
+    public function getAppointmentAsBuyer(): Collection
+    {
+        return $this->appointmentAsBuyer;
+    }
+
+    public function addAppointmentAsBuyer(Appointment $appointmentAsBuyer): self
+    {
+        if (!$this->appointmentAsBuyer->contains($appointmentAsBuyer)) {
+            $this->appointmentAsBuyer[] = $appointmentAsBuyer;
+            $appointmentAsBuyer->setBuyer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAppointmentAsBuyer(Appointment $appointmentAsBuyer): self
+    {
+        if ($this->appointmentAsBuyer->contains($appointmentAsBuyer)) {
+            $this->appointmentAsBuyer->removeElement($appointmentAsBuyer);
+            // set the owning side to null (unless already changed)
+            if ($appointmentAsBuyer->getBuyer() === $this) {
+                $appointmentAsBuyer->setBuyer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Appointment[]
+     */
+    public function getAppointmentAsPatient(): Collection
+    {
+        return $this->appointmentAsPatient;
+    }
+
+    public function addAppointmentAsPatient(Appointment $appointmentAsPatient): self
+    {
+        if (!$this->appointmentAsPatient->contains($appointmentAsPatient)) {
+            $this->appointmentAsPatient[] = $appointmentAsPatient;
+            $appointmentAsPatient->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAppointmentAsPatient(Appointment $appointmentAsPatient): self
+    {
+        if ($this->appointmentAsPatient->contains($appointmentAsPatient)) {
+            $this->appointmentAsPatient->removeElement($appointmentAsPatient);
+            // set the owning side to null (unless already changed)
+            if ($appointmentAsPatient->getPatient() === $this) {
+                $appointmentAsPatient->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Appointment[]
+     */
+    public function getAppointmentAsDoctor(): Collection
+    {
+        return $this->appointmentAsDoctor;
+    }
+
+    public function addAppointmentAsDoctor(Appointment $appointmentAsDoctor): self
+    {
+        if (!$this->appointmentAsDoctor->contains($appointmentAsDoctor)) {
+            $this->appointmentAsDoctor[] = $appointmentAsDoctor;
+            $appointmentAsDoctor->setDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAppointmentAsDoctor(Appointment $appointmentAsDoctor): self
+    {
+        if ($this->appointmentAsDoctor->contains($appointmentAsDoctor)) {
+            $this->appointmentAsDoctor->removeElement($appointmentAsDoctor);
+            // set the owning side to null (unless already changed)
+            if ($appointmentAsDoctor->getDoctor() === $this) {
+                $appointmentAsDoctor->setDoctor(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

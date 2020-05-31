@@ -2,11 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Appointment;
 use App\Entity\City;
 use App\Entity\Prestation;
 use App\Entity\TypeDoctor;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -36,22 +41,6 @@ class SearchDoctorController extends AbstractController
 
         return $this->render('search_doctor/profile_doctor.html.twig', [
             'doctor' => $doctor
-        ]);
-    }
-
-    /**
-     * @Route("/reserver/{idDoctor}/{idPrestation}", name="reserver_rendez_vous")
-     */
-    public function reserverRendezVousAction($idDoctor, $idPrestation){
-        $doctor = $this->getDoctrine()->getRepository(User::class)->find($idDoctor);
-        $prestation = $this->getDoctrine()->getRepository(Prestation::class)->find($idPrestation);
-
-
-
-
-        return $this->render('search_doctor/reserver_rendez_vous.html.twig', [
-            'doctor' => $doctor,
-            'prestation' => $prestation
         ]);
     }
 }
