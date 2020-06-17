@@ -17,6 +17,8 @@
     <br><br>
     <div class="container-fluid row">
         {% if app.user.is_doctor == false %}
+            <div class="col-lg-4"></div>
+            {% else %}
             <div class="col-lg-2"></div>
         {% endif %}
         <div class="col-lg-4 text-center">
@@ -24,20 +26,7 @@
             {% for appointment in appointmentsAsBuyer %}
                 <div class="generic-blockquote">
                     Rendez-vous avec Dr. {{ appointment.doctor.username }} <br>
-                    La date n'a pas encoré été fixée.<br>
-{#                    Payé pour {{ appointment.patient.username }} <br>#}
-                    {{ appointment.prestation.name }}<br>
-                    <a class="text-info" href="{{ url('rendez_vous_individuel', {'id': appointment.id}) }}">Voir le détail</a>
-                </div><br>
-            {% endfor %}
-        </div>
-        <div class="col-lg-4 text-center">
-            <h3>Pour moi</h3><br>
-            {% for appointment in appointmentsAsPatient %}
-                <div class="generic-blockquote">
-                    Rendez-vous avec Dr. {{ appointment.doctor.username }} <br>
-                    La date n'a pas encoré été fixée. <b>Proposer une date</b><br>
-                    Payé par M. {{ appointment.buyer.username }} <br>
+                    Payé pour {{ appointment.namePatient }} <br>
                     {{ appointment.prestation.name }}<br>
                     <a class="text-info" href="{{ url('rendez_vous_individuel', {'id': appointment.id}) }}">Voir le détail</a>
                 </div><br>

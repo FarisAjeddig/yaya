@@ -112,6 +112,8 @@ class AppointmentController extends AbstractController
                 $appointment->setPaymentIntentId($intent['id']);
                 $appointment->setState(Appointment::STATUS_PAID);
 
+                // TODO : Envoyer email et SMS au patient
+
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($appointment);
                 $em->flush();
@@ -133,13 +135,11 @@ class AppointmentController extends AbstractController
     public function mesRendezVousAction()
     {
         $user = $this->getUser();
-        $appointmentsAsPatient = $this->getDoctrine()->getRepository(Appointment::class)->findBy(['patient' => $user]);
         $appointmentsAsBuyer = $this->getDoctrine()->getRepository(Appointment::class)->findBy(['buyer' => $user]);
         $appointmentsAsDoctor = $this->getDoctrine()->getRepository(Appointment::class)->findBy(['doctor' => $user]);
 
 
         return $this->render('appointment/mes_rendez_vous.html.twig', [
-            'appointmentsAsPatient' => $appointmentsAsPatient,
             'appointmentsAsBuyer' => $appointmentsAsBuyer,
             'appointmentsAsDoctor' => $appointmentsAsDoctor
         ]);
@@ -153,54 +153,6 @@ class AppointmentController extends AbstractController
         /** @var Appointment $appointment */
         $appointment = $this->getDoctrine()->getRepository(Appointment::class)->find($id);
         $em = $this->getDoctrine()->getManager();
-
-        if ($appointment->getState() == Appointment::STATUS_PAID || $appointment->getState() == Appointment::STATUS_REFUSED_BY_PATIENT) {
-            // Formulaire pour proposer une date : disponibilités, scheduleByPatientDate
-            $form = $this->createForm(AppointmentType::class, $appointment)
-                ->remove('scheduleByDoctor')
-                ->add('Proposer', SubmitType::class);
-
-
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-                $appointment->setState(Appointment::STATUS_WAITING_FOR_DOCTOR);
-//                $this->sendSMS($appointment->getDoctor()->getPhoneNumber(), "Vérifiez vos RDV");
-                // TODO : Envoyer un e-mail / sms au médecin
-                $em->persist($appointment);
-                $em->flush();
-            }
-
-            return $this->render('appointment/rendez_vous_individuel.html.twig', [
-                'appointment' => $appointment,
-                'form' => $form->createView()
-            ]);
-        } elseif ($appointment->getState() == Appointment::STATUS_WAITING_FOR_PATIENT) {
-            // Formulaire pour accepter ou refuser la date
-            $form = $this->createFormBuilder([])
-                ->add('Accepter', SubmitType::class)
-                ->add('Refuser', SubmitType::class)
-                ->getForm();
-
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                if ($form->get('Accepter')->isClicked()){
-                    $appointment->setState(Appointment::STATUS_ACCEPTED_BY_PATIENT);
-                    $appointment->setFinalSchedule($appointment->getScheduleByDoctor());
-                    $this->captureFunds($appointment->getPaymentIntentId(), $appointment->getPrestation()->getPrice());
-                } else {
-                    $appointment->setState(Appointment::STATUS_REFUSED_BY_PATIENT);
-                }
-                $em->persist($appointment);
-                $em->flush();
-                // TODO : Envoyer un e-mail / sms au médecin
-            }
-
-            return $this->render('appointment/rendez_vous_individuel.html.twig', [
-                'appointment' => $appointment,
-                'form' => $form->createView()
-            ]);
-        }
 
         return $this->render('appointment/rendez_vous_individuel.html.twig', [
             'appointment' => $appointment
