@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Mes rendez-vous</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br>
+
+    <div class="container-fluid row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-5">
+            <h2>Rendez-vous avec M.
+{#                {{ appointment.patient.username }}#}
+            </h2>
+            <b>{{ appointment.prestation.name }}</b> <br>
+            <p>{{ appointment.prestation.description }}</p><br>
+            {% if appointment.state == constant('App\\Entity\\Appointment::STATUS_UNPAID') %}
+                <em>Le paiement n'a pas été pré-autorisé. Ne pas afficher ce rendez-vous.</em>
+            {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_PAID') %}
+                <em>Aucune date n'a été fixée pour le moment. <a class="text-danger" href="#">Proposer une date</a></em>
+            {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_WAITING_FOR_PATIENT') %}
+                <em>Vous avez proposé une date mais le patient n'a pas encore répondu</em>
+            {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_WAITING_FOR_DOCTOR') %}
+                <em>Le patient a proposé une date. <a href="#">Accepter ou refuser</a></em>
+            {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_REFUSED_BY_PATIENT') %}
+                <em>Le patient a refusé la date proposée, veuillez en proposer une nouvelle. <a class="text-danger" href="#">Proposer une date</a>. </em>
+            {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_ACCEPTED_BY_PATIENT') %}
+                <em>La date a été fixée.</em>
+            {% else %}
+                <em>Le rendez-vous a bien eu lieu. <a class="text-danger" href="#">Déclarer une erreur</a></em>
+            {% endif %}
+        </div>
+        <div class="col-lg-1"></div>
+        <div class="col-lg-4">
+            <h2>Date et créneau</h2>
+            {% if form is defined %}
+                {% form_theme form 'bootstrap_4_layout.html.twig' %}
+            {% endif %}
+            {% if appointment.state == constant('App\\Entity\\Appointment::STATUS_UNPAID') %}
+                <em>Le paiement doit être autorisé avant de fixer une date.</em>
+            {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_PAID') %}
+                <em>Aucune date n'a été fixée pour le moment. <a class="text-danger" href="#">Proposer une date</a></em>
+                <br><br>
+                {{ form(form) }}
+            {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_WAITING_FOR_PATIENT') %}
+                <em>En attente de la réponse du patient.</em>
+            {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_WAITING_FOR_DOCTOR') %}
+                <em>Le patient a proposé une date. Accepter ou refuser.</em>
+                {{ form(form) }}
+            {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_REFUSED_BY_PATIENT') %}
+                <em>Vous pouvez proposer une nouvelle date.</em>
+                <br><br>
+                {{ form(form) }}
+            {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_ACCEPTED_BY_PATIENT') %}
+                <em>Le rendez-vous est prévu pour le {{ appointment.finalSchedule |date("\\L\\e m/d/y \\à g:i")  }}</em>
+                <a class="btn btn-success" href="{{ url('confirmer_rendez_vous_done', {'id': appointment.id}) }}">Le rendez-vous a bien eu lieu</a>
+                <a class="btn btn-outline-danger" href="#">Signaler un problème</a>
+            {% else %}
+                <em>Le rendez-vous a bien eu lieu le {{ appointment.finalSchedule |date("\\L\\e m/d/y \\à g:i")  }}</em>
+            {% endif %}
+        </div>
+    </div>
+    {{ dump(appointment) }}
+
+{% endblock %}

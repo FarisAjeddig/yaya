@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\City;
 use App\Entity\Country;
 use App\Entity\Prestation;
 use App\Entity\TypeDoctor;
@@ -156,7 +157,17 @@ class DefaultController extends AbstractController
             $types[$type->getName()] = $type->getId();
         }
 
-        $countrys = $this->getDoctrine()->getRepository(Country::class)->findAll();
+        $dataTypes = [];
+        foreach ($user->getTypeDoctor() as $type){
+            $dataTypes[$type->getName()] = $type->getId();
+        }
+
+        $citysList = $this->getDoctrine()->getRepository(City::class)->findAll();
+
+        $citys = [];
+        foreach ($citysList as $city){
+            $citys[$city->getName()] = $city->getId();
+        }
 
         $form = $this->createFormBuilder($user)
             ->add("types", ChoiceType::class, [
@@ -165,7 +176,8 @@ class DefaultController extends AbstractController
                 'multiple' => true,
                 'label' => 'Type de médecin',
                 'attr' => ['class' => 'js-example-basic-multiple'],
-                'mapped' => false
+                'mapped' => false,
+                'data' => $dataTypes
             ])
             ->add("diploma", TextareaType::class, [
                 'label' => "Vos qualifications (diplômes, etc.)",
@@ -178,8 +190,10 @@ class DefaultController extends AbstractController
                 'label' => "Adresse des consultation"
             ])
             ->add("city", ChoiceType::class, [
-                'choices' => $countrys,
-                'attr' => ['class' => 'js-example-basic-multiple']
+                'choices' => $citys,
+                'attr' => ['class' => 'js-example-basic-multiple'],
+                'mapped' => false,
+                'data' => $user->getCity()[0] !== null ? $user->getCity()[0]->getName() : null
             ])
             ->add("desc", TextareaType::class, [
                 "label" => "Informations complémentaires",
@@ -191,7 +205,7 @@ class DefaultController extends AbstractController
         /** @var Prestation $prestation */
         $prestation = new Prestation();
         $formPrestation = $this->createForm(PrestationFormType::class, $prestation);
-
+        // TODO : Modifier le classe user pour ajouter le prix le plus bas des prestations (plus opti)
 
         $form->handleRequest($request);
         $formPrestation->handleRequest($request);
@@ -199,9 +213,13 @@ class DefaultController extends AbstractController
             $em = $this->getDoctrine()->getManager();
 
             if ($form->isSubmitted()){
-                dd($form->getData());
+                /** @var City $city */
+                $city = $this->getDoctrine()->getRepository(City::class)->find($form->get('city')->getData());
+                // TODO : modifier la class user pour avoir une seul city
+                $user->addCity($city);
                 $repoTypesDoctors = $this->getDoctrine()->getRepository(TypeDoctor::class);
                 foreach($form->get('types')->getData() as $typeChoosed){
+                    // TODO : reset les types de docteurs avant de les remettre.
                     $user->addTypeDoctor($repoTypesDoctors->find($typeChoosed));
                 }
                 $url = 'https://maps.googleapis.com/maps/api/geocode/json?';
@@ -231,8 +249,7 @@ class DefaultController extends AbstractController
         return $this->render('bundles/FOSUserBundle/Profile/infoDoctor.html.twig', [
             'form' => $form->createView(),
             'formPrestation' => $formPrestation->createView(),
-            'user' => $user,
-            'countrys' => $countrys
+            'user' => $user
             ]);
     }
 

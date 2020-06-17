@@ -159,6 +159,9 @@
             "config/packages/sensio_framework_extra.yaml"
         ]
     },
+    "stripe/stripe-php": {
+        "version": "v7.37.1"
+    },
     "swiftmailer/swiftmailer": {
         "version": "v6.2.3"
     },
@@ -559,6 +562,9 @@
     },
     "twig/twig": {
         "version": "v3.0.3"
+    },
+    "twilio/sdk": {
+        "version": "6.7.0"
     },
     "webmozart/assert": {
         "version": "1.7.0"

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Appointment;
 use App\Entity\City;
 use App\Entity\Country;
 use App\Entity\TypeDoctor;
@@ -52,7 +53,10 @@ class AdminController extends AbstractController
      * @Route("/rendez-vous", name="rendez_vous")
      */
     public function rendezVous(){
-        return $this->render('admin/rendez_vous.html.twig');
+        $appointments = $this->getDoctrine()->getRepository(Appointment::class)->findAll();
+        return $this->render('admin/rendez_vous.html.twig', [
+            'appointments' => $appointments
+        ]);
     }
 
     /**
@@ -69,35 +73,34 @@ class AdminController extends AbstractController
         /** @var User $user */
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
 
-        $form = $this->createForm(DoctorEditByAdminType::class, $user);
 
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST')){
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            $message = (new \Swift_Message('Vos informations ont été modifiées'))
-                ->setFrom('digibinks@gmail.com')
-                ->setTo($user->getEmailCanonical())
-                ->setBody(
-                    $this->renderView(
-                    // templates/emails/registration.html.twig
-                        'admin/emails/editDoctor.html.twig',
-                        ['user' => $user]
-                    ),
-                    'text/html'
-                );
-
-            $mailer->send($message);
+//        $form->handleRequest($request);
+//
+//        if ($request->isMethod('POST')){
+//            $em = $this->getDoctrine()->getManager();
+//            $em->persist($user);
+//            $em->flush();
+//
+//            $message = (new \Swift_Message('Vos informations ont été modifiées'))
+//                ->setFrom('digibinks@gmail.com')
+//                ->setTo($user->getEmailCanonical())
+//                ->setBody(
+//                    $this->renderView(
+//                    // templates/emails/registration.html.twig
+//                        'admin/emails/editDoctor.html.twig',
+//                        ['user' => $user]
+//                    ),
+//                    'text/html'
+//                );
+//
+//            $mailer->send($message);
 
             return $this->redirectToRoute('admin_doctors');
-        }
+//        }
 
-        return $this->render('admin/editDoctor.html.twig', [
-            'form' => $form->createView()
-        ]);
+//        return $this->render('admin/editDoctor.html.twig', [
+//            'form' => $form->createView()
+//        ]);
     }
 
     /**
@@ -278,4 +281,6 @@ class AdminController extends AbstractController
     }
 
     // Fin gestion des pays et des villes
+
+
 }

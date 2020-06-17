@@ -14,8 +14,9 @@ class Appointment
     const STATUS_UNPAID = 'Le client n\'a pas encore entré sa carte';
     const STATUS_PAID = 'Le client a entré sa carte, en attente que le médecin propose un créneau';
     const STATUS_WAITING_FOR_PATIENT = 'Le médecin a proposé un créneau mais le patient n\'a pas encore répondu';
+    const STATUS_WAITING_FOR_DOCTOR = 'Le patient a proposé un créneau mais le docteur n\'a pas encore répondu';
     const STATUS_REFUSED_BY_PATIENT = 'Le patient a refusé le créneau proposé par le médecin, on attent qu\'il en propose un nouveau';
-    const STATUS_ACCEPTED_BY_PATIENT = 'Le patient et le médecin se sont mis d\'accord sur le créneau.';
+    const STATUS_ACCEPTED_BY_PATIENT = 'Le patient et le médecin se sont mis d\'accord sur le créneau';
     const STATUS_DONE = "Le rendez-vous a bien eu lieu, l'argent a été débloqué pour le médecin et il peut le demander dans son profil";
 
     /**
@@ -69,6 +70,21 @@ class Appointment
      * @ORM\ManyToOne(targetEntity="App\Entity\Prestation", inversedBy="appointments")
      */
     private $prestation;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $paymentIntentId;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $scheduleByPatientDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $finalSchedule;
 
     public function __construct()
     {
@@ -185,6 +201,42 @@ class Appointment
     public function setPrestation(?Prestation $prestation): self
     {
         $this->prestation = $prestation;
+
+        return $this;
+    }
+
+    public function getPaymentIntentId(): ?string
+    {
+        return $this->paymentIntentId;
+    }
+
+    public function setPaymentIntentId(?string $paymentIntentId): self
+    {
+        $this->paymentIntentId = $paymentIntentId;
+
+        return $this;
+    }
+
+    public function getScheduleByPatientDate(): ?\DateTimeInterface
+    {
+        return $this->scheduleByPatientDate;
+    }
+
+    public function setScheduleByPatientDate(?\DateTimeInterface $scheduleByPatientDate): self
+    {
+        $this->scheduleByPatientDate = $scheduleByPatientDate;
+
+        return $this;
+    }
+
+    public function getFinalSchedule(): ?\DateTimeInterface
+    {
+        return $this->finalSchedule;
+    }
+
+    public function setFinalSchedule(?\DateTimeInterface $finalSchedule): self
+    {
+        $this->finalSchedule = $finalSchedule;
 
         return $this;
     }

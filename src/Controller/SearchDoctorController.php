@@ -22,7 +22,7 @@ class SearchDoctorController extends AbstractController
      */
     public function searchDoctorAction(Request $request, $idTypeDoctor, $idCity)
     {
-        $doctors = $this->getDoctrine()->getRepository(User::class)->findBy([]);
+        $doctors = $this->getDoctrine()->getRepository(User::class)->findBy(['is_doctor' => true]);
         $typeDoctor = $this->getDoctrine()->getRepository(TypeDoctor::class)->find($idTypeDoctor);
         $city = $this->getDoctrine()->getRepository(City::class)->find($idCity);
 
@@ -37,6 +37,7 @@ class SearchDoctorController extends AbstractController
      * @Route("/doctor/{id}", name="doctor_profile")
      */
     public function doctorProfileAction($id){
+        // TODO : Vérifier que c'est bien un docteur
         $doctor = $this->getDoctrine()->getRepository(User::class)->find($id);
 
         return $this->render('search_doctor/profile_doctor.html.twig', [

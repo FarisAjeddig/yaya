@@ -23,7 +23,6 @@
                     <th scope="col">Email</th>
                     <th scope="col">Tel</th>
                     <th scope="col">Type de docteur</th>
-                    <th scope="col">Prix de la consultation</th>
                     <th scope="col">Actions</th>
                 </tr>
                 </thead>
@@ -34,9 +33,14 @@
                         <td>{{ user.username }}</td>
                         <td><a style="color: white" href="mailto:{{ user.email }}">{{ user.email }}</a></td>
                         <td><a style="color: white" href="telto:{{ user.phone_number }}">{{ user.phone_number }}</a></td>
-                        <td>{{ dump(user.type_doctor) }}</td>
-                        <td>{{ user.price }}</td>
-                        <td><a href="{{ url('admin_edit_doctor', {id: user.id}) }}" class="text-info">Modifier</a> | <a class="text-danger" href="{{ url('admin_delete_user', {id: user.id}) }}">Supprimer</a></td>
+                        <td>
+                            {% for type in user.type_doctor %}
+                                {{ type.name }} &nbsp; &nbsp;
+                            {% endfor %}
+                        </td>
+                        <td>
+{#                            <a href="{{ url('admin_edit_doctor', {id: user.id}) }}" class="text-info">Modifier</a> | #}
+                            <a class="text-danger" href="{{ url('admin_delete_user', {id: user.id}) }}">Supprimer</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
