@@ -24,13 +24,14 @@
             <p>{{ prestation.description }}</p><br><br>
             <h3>Détails sur la réservation</h3>
             <i class="fa fa-phone"> </i> {{ appointment.phoneNumberPatient }}&nbsp;&nbsp;
-            <i class="fa fa-envelope"> </i> {{ appointment.emailPatient }}<br><br>
-            <span>Disponibilités (modifiable par le patient)</span> <br>
-            <p>{{ appointment.schedulePatient }}</p>
+            <i class="fa fa-envelope"> </i> {{ appointment.emailPatient }}<br>
+            <b>{{ appointment.namePatient }}</b>
 
         </div>
         <div class="col-md-2"></div>
         <div class="col-md-4 text-center"><br><br>
+            <h3>{{ prestation.price }}€ + 3€ frais de gestion</h3>
+            {# TODO Faire un tableau récapitulatif du prix#}
             {{ form_start(form, {attr: {id: form.vars.id}}) }}
             <div class="form-group">
                 <label for="card-element">

@@ -41,14 +41,14 @@ class AppointmentController extends AbstractController
         $form = $this->createFormBuilder($appointment)
             ->add('phoneNumberPatient', TelType::class, ['label' => "Numéro de téléphone du patient"])
             ->add('emailPatient', TextType::class, ['label' => "Adresse e-mail du patient"])
-            ->add('schedulePatient', TextareaType::class, ['label' => "Quelles sont les disponibilités du patient ?"])
+            ->add('namePatient', TextType::class, ['label' => "Nom et prénom du patient"])
             ->add('Reserver', SubmitType::class)
             ->getForm();
 
         $form->handleRequest($request);
 
 
-        if ($request->isMethod('POST')) {
+        if ($request->isMethod('POST')){
             $em = $this->getDoctrine()->getManager();
 
             $appointment->setState(Appointment::STATUS_UNPAID);
@@ -56,26 +56,11 @@ class AppointmentController extends AbstractController
             $appointment->setDoctor($doctor);
             $appointment->setBuyer($currentUser);
 
-
-            $patient = $repositoryUser->findBy(['emailCanonical' => strtolower($appointment->getEmailPatient())]);
-
-            // TODO : Check le numéro de téléphone aussi
-            // TODO : Créer le compte et lui envoyer un email et un sms
-
-            if ($patient !== []) {
-                /** @var User $patient */
-                $patient = $patient[0];
-                $appointment->setPatient($patient);
-                $patient->addAppointmentAsPatient($appointment);
-            }
-
             $doctor->addAppointmentAsDoctor($appointment);
             $currentUser->addAppointmentAsBuyer($appointment);
 
-
             $em->persist($appointment);
             $em->flush();
-
 
             return $this->redirectToRoute('reserver_payer', ['idAppointment' => $appointment->getId()]);
         }
@@ -104,6 +89,8 @@ class AppointmentController extends AbstractController
             ])
             ->add('submit', SubmitType::class, ['label' => "Pré-autoriser le prélévement", 'attr' => ['class' => "genric-btn info circle arrow text-center"]])
             ->getForm();
+
+        // TODO AJOUTER LES FRAIS DE GESTION
 
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);

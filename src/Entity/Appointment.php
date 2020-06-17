@@ -13,11 +13,11 @@ class Appointment
 {
     const STATUS_UNPAID = 'Le client n\'a pas encore entré sa carte';
     const STATUS_PAID = 'Le client a entré sa carte, en attente que le médecin propose un créneau';
-    const STATUS_WAITING_FOR_PATIENT = 'Le médecin a proposé un créneau mais le patient n\'a pas encore répondu';
-    const STATUS_WAITING_FOR_DOCTOR = 'Le patient a proposé un créneau mais le docteur n\'a pas encore répondu';
-    const STATUS_REFUSED_BY_PATIENT = 'Le patient a refusé le créneau proposé par le médecin, on attent qu\'il en propose un nouveau';
-    const STATUS_ACCEPTED_BY_PATIENT = 'Le patient et le médecin se sont mis d\'accord sur le créneau';
-    const STATUS_DONE = "Le rendez-vous a bien eu lieu, l'argent a été débloqué pour le médecin et il peut le demander dans son profil";
+//    const STATUS_WAITING_FOR_PATIENT = 'Le médecin a proposé un créneau mais le patient n\'a pas encore répondu';
+//    const STATUS_WAITING_FOR_DOCTOR = 'Le patient a proposé un créneau mais le docteur n\'a pas encore répondu';
+//    const STATUS_REFUSED_BY_PATIENT = 'Le patient a refusé le créneau proposé par le médecin, on attent qu\'il en propose un nouveau';
+//    const STATUS_ACCEPTED_BY_PATIENT = 'Le patient et le médecin se sont mis d\'accord sur le créneau';
+//    const STATUS_DONE = "Le rendez-vous a bien eu lieu, l'argent a été débloqué pour le médecin et il peut le demander dans son profil";
 
     /**
      * @ORM\Id()
@@ -37,29 +37,14 @@ class Appointment
     private $emailPatient;
 
     /**
-     * @ORM\Column(type="text")
-     */
-    private $schedulePatient;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $state;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $scheduleByDoctor;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="appointmentAsBuyer")
      */
     private $buyer;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="appointmentAsPatient")
-     */
-    private $patient;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="appointmentAsDoctor")
@@ -77,14 +62,9 @@ class Appointment
     private $paymentIntentId;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="text")
      */
-    private $scheduleByPatientDate;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $finalSchedule;
+    private $namePatient;
 
     public function __construct()
     {
@@ -119,18 +99,6 @@ class Appointment
         return $this;
     }
 
-    public function getSchedulePatient(): ?string
-    {
-        return $this->schedulePatient;
-    }
-
-    public function setSchedulePatient(string $schedulePatient): self
-    {
-        $this->schedulePatient = $schedulePatient;
-
-        return $this;
-    }
-
     public function getState(): ?string
     {
         return $this->state;
@@ -143,19 +111,6 @@ class Appointment
         return $this;
     }
 
-    public function getScheduleByDoctor(): ?\DateTimeInterface
-    {
-        return $this->scheduleByDoctor;
-    }
-
-    public function setScheduleByDoctor(?\DateTimeInterface $scheduleByDoctor): self
-    {
-        $this->scheduleByDoctor = $scheduleByDoctor;
-
-        return $this;
-    }
-
-
     public function getBuyer(): ?User
     {
         return $this->buyer;
@@ -165,18 +120,6 @@ class Appointment
     public function setBuyer(?User $buyer): self
     {
         $this->buyer = $buyer;
-
-        return $this;
-    }
-
-    public function getPatient(): ?User
-    {
-        return $this->patient;
-    }
-
-    public function setPatient(?User $patient): self
-    {
-        $this->patient = $patient;
 
         return $this;
     }
@@ -217,26 +160,14 @@ class Appointment
         return $this;
     }
 
-    public function getScheduleByPatientDate(): ?\DateTimeInterface
+    public function getNamePatient(): ?string
     {
-        return $this->scheduleByPatientDate;
+        return $this->namePatient;
     }
 
-    public function setScheduleByPatientDate(?\DateTimeInterface $scheduleByPatientDate): self
+    public function setNamePatient(string $namePatient): self
     {
-        $this->scheduleByPatientDate = $scheduleByPatientDate;
-
-        return $this;
-    }
-
-    public function getFinalSchedule(): ?\DateTimeInterface
-    {
-        return $this->finalSchedule;
-    }
-
-    public function setFinalSchedule(?\DateTimeInterface $finalSchedule): self
-    {
-        $this->finalSchedule = $finalSchedule;
+        $this->namePatient = $namePatient;
 
         return $this;
     }

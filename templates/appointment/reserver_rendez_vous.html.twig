@@ -28,12 +28,12 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    {{ form_label(form.phoneNumberPatient)}}
+                    {{ form_label(form.phoneNumberPatient)}}<p style="font-size: 12px">Il recevra un SMS lui indiquant les démarches à suivre</p>
                     {{ form_widget(form.phoneNumberPatient, {'attr': {'class': 'single-input', 'placeholder': "+336 12 34 56 78"}} ) }}
                     {{ form_errors(form.phoneNumberPatient) }}
                 </div>
                 <div class="col-md-6">
-                    {{ form_label(form.emailPatient)}}
+                    {{ form_label(form.emailPatient)}}<p style="font-size: 12px">Il recevra un SMS lui indiquant les démarches à suivre</p>
                     {{ form_widget(form.emailPatient, {'attr': {'class': 'single-input', 'placeholder': "example@afromed.co"}} ) }}
                     {{ form_errors(form.emailPatient) }}
                 </div>
@@ -41,9 +41,9 @@
             <br>
             <div class="row">
                 <div class="col-md-12">
-                    {{ form_label(form.schedulePatient) }}<p style="font-size: 12px">Le médecin lui proposera ensuire un créneau</p>
-                    {{ form_widget(form.schedulePatient, {'attr': {'class': 'single-textarea', 'placeholder': 'Disponibilités du patient'}}) }}
-                    {{ form_errors(form.schedulePatient) }}
+                    {{ form_label(form.namePatient) }}<p style="font-size: 12px">Il devra ensuite amener sa carte d'identité chez le médecin</p>
+                    {{ form_widget(form.namePatient, {'attr': {'class': 'single-input', 'placeholder': 'Nom et prénom du patient'}}) }}
+                    {{ form_errors(form.namePatient) }}
                 </div>
             </div>
 
