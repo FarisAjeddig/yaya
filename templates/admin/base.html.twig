@@ -1,0 +1,150 @@
+<div class="bradcam_area bradcam_bg_3">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="bradcam_text">
+                    <h3>{% block secondTitle %}Administration{% endblock %}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+    body {
+        overflow-x: hidden;
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+    }
+
+    /* Toggle Styles */
+
+    #viewport {
+        padding-left: 250px;
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+    }
+
+    #content {
+        width: 100%;
+        position: relative;
+        margin-right: 0;
+        padding-bottom: 30%;
+    }
+
+    /* Sidebar Styles */
+
+    #sidebar {
+        z-index: 1000;
+        position: absolute;
+        left: 250px;
+        width: 250px;
+        height: content-box;
+        margin-left: -250px;
+        overflow-y: auto;
+        background: #37474F;
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+    }
+
+    #sidebar header {
+        background-color: #263238;
+        font-size: 20px;
+        line-height: 52px;
+        text-align: center;
+    }
+
+    #sidebar header a {
+        color: #fff;
+        display: block;
+        text-decoration: none;
+    }
+
+    #sidebar header a:hover {
+        color: #fff;
+    }
+
+    #sidebar .nav{
+
+    }
+
+    #sidebar .nav a{
+        background: none;
+        border-bottom: 1px solid #455A64;
+        color: #CFD8DC;
+        font-size: 14px;
+        padding: 16px 24px;
+    }
+
+    #sidebar .nav a:hover{
+        background: none;
+        color: #ECEFF1;
+    }
+
+    #sidebar .nav a i{
+        margin-right: 16px;
+    }
+
+    .nav>li>a {
+        position: relative;
+        display:block;
+        padding: 10px 15px;
+    }
+
+    ul.nav>li{
+        width: 100%;
+    }
+</style>
+
+<div id="viewport" class="">
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <header>
+            <a href="{{ url('admin_homepage') }}">Back office</a>
+        </header>
+        <ul class="nav">
+            <li>
+                <a href="{{ url('admin_users') }}">
+                    <i class="fa fa-users"></i> Les utilisateurs
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('admin_doctors') }}">
+                    <i class="fa fa-certificate"></i> Les médecins
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('admin_type_doctor') }}">
+                    <i class="fa fa-adjust"></i> Type de médecins
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('admin_rendez_vous') }}">
+                    <i class="fa fa-calendar"></i> Les rendez-vous
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('admin_reserver_rendez_vous') }}">
+                    <i class="fa fa-calendar-o"></i> Réserver un rendez-vous
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('admin_countrys') }}">
+                    <i class="fa fa-building-o"></i> Pays et ville
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- Content -->
+    <div id="content">
+        {% block bodyAdmin %}
+        {% endblock %}
+    </div>
+</div>

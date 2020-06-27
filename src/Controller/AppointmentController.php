@@ -21,7 +21,6 @@ use Twilio\Rest\Client;
 
 class AppointmentController extends AbstractController
 {
-
     /**
      * @Route("/reserver/{idDoctor}/{idPrestation}", name="reserver_rendez_vous")
      */
@@ -75,7 +74,7 @@ class AppointmentController extends AbstractController
     /**
      * @Route("/payer/{idAppointment}", name="reserver_payer")
      */
-    public function reserverPayerAction(Request $request, $idAppointment)
+    public function reserverPayerAction(Request $request, $idAppointment, \Swift_Mailer $mailer)
     {
         /** @var Appointment $appointment */
         $appointment = $this->getDoctrine()->getRepository(Appointment::class)->find($idAppointment);
@@ -90,8 +89,6 @@ class AppointmentController extends AbstractController
             ->add('submit', SubmitType::class, ['label' => "Pré-autoriser le prélévement", 'attr' => ['class' => "genric-btn info circle arrow text-center"]])
             ->getForm();
 
-        // TODO AJOUTER LES FRAIS DE GESTION
-
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);
 
@@ -103,7 +100,7 @@ class AppointmentController extends AbstractController
                 );
 
                 $intent = $stripe->paymentIntents->create([
-                    'amount' => $appointment->getPrestation()->getPrice() * 100,
+                    'amount' => $appointment->getPrestation()->getPrice() * 100 + 300,
                     'currency' => 'eur',
                     'payment_method_types' => ['card'],
                     'capture_method' => 'manual'
@@ -112,7 +109,10 @@ class AppointmentController extends AbstractController
                 $appointment->setPaymentIntentId($intent['id']);
                 $appointment->setState(Appointment::STATUS_PAID);
 
-                // TODO : Envoyer email et SMS au patient
+                $this->sendMail($appointment->getEmailPatient(), "Un rendez-vous chez le médecin " . $appointment->getDoctor()->getUsername() . " vous attend !", "appointment/emails/nouveau-rendez-vous-pour-le-patient.html.twig", $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . ". Vous pouvez vous rendre directement la-bas pour réserver un créneau ou l'appeler pour fixer un rendez-vous au " . $appointment->getDoctor()->getPhoneNumber(), $mailer);
+                $this->sendSMS($appointment->getPhoneNumberPatient(), $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . '.');
+
+                $this->get('session')->getFlashBag()->add('success', 'Le rendez-vous a bien été payé. Le patient a reçu un SMS et un email lui indiquant la marche à suivre.');
 
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($appointment);
@@ -138,92 +138,32 @@ class AppointmentController extends AbstractController
         $appointmentsAsBuyer = $this->getDoctrine()->getRepository(Appointment::class)->findBy(['buyer' => $user]);
         $appointmentsAsDoctor = $this->getDoctrine()->getRepository(Appointment::class)->findBy(['doctor' => $user]);
 
-
         return $this->render('appointment/mes_rendez_vous.html.twig', [
-            'appointmentsAsBuyer' => $appointmentsAsBuyer,
-            'appointmentsAsDoctor' => $appointmentsAsDoctor
+            'appointmentsAsBuyer' => array_reverse($appointmentsAsBuyer),
+            'appointmentsAsDoctor' => array_reverse($appointmentsAsDoctor)
         ]);
     }
 
     /** @Route("/mes-rendez-vous/{id}", name="rendez_vous_individuel") */
     public function rendezVousIndividuelAction(Request $request, $id)
     {
-        // TODO : Bien différencier les textes selon qu'on soit médecin, patient ou juste acheteur. Il y a des erreurs pour l'instant
-        // TODO : Vérifier qu'on est bien dans le rendez-vous
         /** @var Appointment $appointment */
         $appointment = $this->getDoctrine()->getRepository(Appointment::class)->find($id);
-        $em = $this->getDoctrine()->getManager();
 
-        return $this->render('appointment/rendez_vous_individuel.html.twig', [
-            'appointment' => $appointment
-        ]);
-    }
+        $user = $this->getUser();
 
-
-    /** @Route("/doctor/mes-rendez-vous/{id}", name="doctor_rendez_vous_individuel") */
-    public function doctorRendezVousIndividuelAction(Request $request, $id)
-    {
-        // TODO : Vérifier qu'on est bien dans le rendez-vous
-        /** @var Appointment $appointment */
-        $appointment = $this->getDoctrine()->getRepository(Appointment::class)->find($id);
-        $em = $this->getDoctrine()->getManager();
-
-        if ($appointment->getState() == Appointment::STATUS_PAID || $appointment->getState() == Appointment::STATUS_REFUSED_BY_PATIENT) {
-            // Formulaire pour proposer une date : scheduleByDoctor
-            $form = $this->createForm(AppointmentType::class, $appointment)
-                ->remove('schedulePatient')
-                ->remove('scheduleByPatient')
-                ->add('Proposer', SubmitType::class);
-
-            $em = $this->getDoctrine()->getManager();
-
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-                $appointment->setState(Appointment::STATUS_WAITING_FOR_DOCTOR);
-                // TODO : Envoyer un e-mail / sms au médecin
-                $em->persist($appointment);
-                $em->flush();
-            }
-
-            return $this->render('appointment/doctor_rendez_vous_individuel.html.twig', [
-                'appointment' => $appointment,
-                'form' => $form->createView()
+        if ($appointment->getDoctor() == $user){
+            return $this->render('appointment/rendez_vous_individuel_as_docteur.html.twig', [
+                'appointment' => $appointment
             ]);
-        } elseif ($appointment->getState() == Appointment::STATUS_WAITING_FOR_DOCTOR) {
-            // Formulaire pour accepter ou refuser la date. S'il refuse, il doit proposer une nouvelle date
-            $form = $this->createFormBuilder(['Accepter' => false, 'Refuser' => false])
-                ->add('Accepter', SubmitType::class)
-                ->add('scheduleByDoctor', DateTimeType::class, ['label' => "Si vous refusez la proposition, proposez un nouveau créneau.", "required" =>     false])
-                ->add('Refuser', SubmitType::class)
-                ->getForm();
-
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                if ($form->get('Accepter')->isClicked()){
-                    $appointment->setState(Appointment::STATUS_ACCEPTED_BY_PATIENT);
-                    $appointment->setFinalSchedule($appointment->getScheduleByPatientDate());
-                    $this->captureFunds($appointment->getPaymentIntentId(), $appointment->getPrestation()->getPrice());
-                } else {
-                    $appointment->setState(Appointment::STATUS_WAITING_FOR_PATIENT);
-                    $appointment->setScheduleByDoctor($form->get('scheduleByDoctor')->getData());
-                    // TODO : Check la date proposée par le médecin.
-                }
-                $em->persist($appointment);
-                $em->flush();
-                // TODO : Envoyer un e-mail / sms au patient
-
-            }
-
-            return $this->render('appointment/doctor_rendez_vous_individuel.html.twig', [
-                'appointment' => $appointment,
-                'form' => $form->createView()
+        } elseif ($appointment->getBuyer() == $user){
+            return $this->render('appointment/rendez_vous_individuel.html.twig', [
+                'appointment' => $appointment
             ]);
+        } else {
+            $this->get('session')->getFlashBag()->add('danger', 'Vous n\'êtes ni médecin, ni acheteur de ce rendez-vous.');
+            return $this->redirectToRoute("mes_rendez_vous");
         }
-
-        return $this->render('appointment/doctor_rendez_vous_individuel.html.twig', [
-            'appointment' => $appointment
-        ]);
     }
 
     /** @Route("confirmer-rendez-vous-done/{id}", name="confirmer_rendez_vous_done") */
@@ -263,5 +203,21 @@ class AppointmentController extends AbstractController
             ->create($to, // to
                 ["body" => $message, "from" => $twilio_number]
             );
+    }
+
+    public function sendMail($to, $subject, $file, $text, $mailer){
+        // Envoi d'un mail à l'administrateur
+        $message = (new \Swift_Message($subject))
+            ->setFrom('digibinks@gmail.com')
+            ->setTo($to)
+            ->setBody(
+                $this->renderView(
+                    $file,
+                    ['text' => $text]
+                ),
+                'text/html'
+            );
+
+        $mailer->send($message);
     }
 }

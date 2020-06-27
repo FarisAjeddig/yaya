@@ -45,7 +45,7 @@
                                                     <li><a href="{{ url('homepage') }}">Accueil</a></li>
 {#                                                    <li><a href="{{ url('register_doctor') }}">Je suis médecin</a></li>#}
                                                     {% if app.user.id is defined %}
-                                                    <li><a href="#">Mes informations <i class="ti-angle-down"></i></a>
+                                                    <li><a href="{{ url('fos_user_profile_show') }}">Mes informations <i class="ti-angle-down"></i></a>
                                                         <ul class="submenu">
                                                             <li><a href="{{ url('fos_user_profile_show') }}">Mon profil</a></li>
                                                             <li><a href="{{ url('mes_rendez_vous') }}">Mes rendez-vous</a></li>
@@ -55,6 +55,7 @@
                                                     {% if app.user.id is not defined %}
                                                         <li><a href="{{ url('fos_user_security_login') }}">Connexion</a></li>
                                                     {% endif %}
+                                                    <li><a href="{{ url('search_doctor') }}">Trouver un médecin</a></li>
 {#                                                    <li><a href="#">blog <i class="ti-angle-down"></i></a>#}
 {#                                                        <ul class="submenu">#}
 {#                                                            <li><a href="#">blog</a></li>#}
@@ -85,8 +86,114 @@
                     </div>
                 </div>
             </header>
+
+            {% for type, messages in app.session.flashbag.all() %}
+                <br><br>
+                {% for message in messages %}
+                    <div class="row container-fluid" >
+                        <div class="col-lg-2"></div>
+                        <div class="center alert alert-{{ type }} col-lg-2">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
         {% endblock %}
         {% block body %}
+        {% endblock %}
+        {% block footer %}
+
+            <!-- footer start -->
+            <footer class="footer">
+                <div class="footer_top">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xl-4 col-md-6 col-lg-3">
+                                <div class="footer_widget wow fadeInUp" data-wow-duration="1s" data-wow-delay=".3s">
+                                    <div class="footer_logo">
+                                        <a href="#">
+                                            <img src="{{ '/build/images/logo.png' }}" width="50%" alt="Logo Afromed">
+                                        </a>
+                                    </div>
+                                    <p>
+                                        contact@afromed.co <br>
+                                        +336 66 66 66 66 <br>
+                                        123 Rue de la chance, Paris
+                                    </p>
+                                    <div class="socail_links">
+                                        <ul>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ti-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-google-plus"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-instagram"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-6 col-lg-4">
+                                <div class="footer_widget wow fadeInUp" data-wow-duration="1.1s" data-wow-delay=".4s">
+                                    <h3 class="footer_title">
+                                        Services
+                                    </h3>
+                                    <ul>
+                                        <li><a href="#">Accueil</a></li>
+                                        <li><a href="#">Trouver un médecin </a></li>
+                                        <li><a href="#">S'inscrire</a></li>
+                                        <li><a href="#">Se connecter</a></li>
+                                    </ul>
+
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-6 col-lg-4">
+                                <div class="footer_widget wow fadeInUp" data-wow-duration="1.2s" data-wow-delay=".5s">
+                                    <h3 class="footer_title">
+                                        Liens utiles
+                                    </h3>
+                                    <ul>
+                                        <li><a href="#">Nous contacter</a></li>
+                                        <li><a href="#">CGU/CGV & RGPD</a></li>
+                                        <li><a href="#">Mentions légales</a></li>
+                                        <li><a href="#">Qui sommes-nous ?</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+{#                            <div class="col-xl-4 col-md-6 col-lg-4">#}
+{#                                <div class="footer_widget wow fadeInUp" data-wow-duration="1.3s" data-wow-delay=".6s">#}
+{#                                    <h3 class="footer_title">#}
+{#                                        Subscribe#}
+{#                                    </h3>#}
+{#                                    <form action="#" class="newsletter_form">#}
+{#                                        <input type="text" placeholder="Enter your mail">#}
+{#                                        <button type="submit">Subscribe</button>#}
+{#                                    </form>#}
+{#                                    <p class="newsletter_text">Esteem spirit temper too say adieus who direct esteem esteems#}
+{#                                        luckily.</p>#}
+{#                                </div>#}
+{#                            </div>#}
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!--/ footer end  -->
+
         {% endblock %}
         {% block javascripts %}
 {#            <script src="https://kit.fontawesome.com/d63d6c8cb5.js" crossorigin="anonymous"></script>#}

@@ -19,13 +19,13 @@
     <div class="container-fluid row">
         <div class="col-lg-1"></div>
         <div class="col-lg-5">
-            <h2>Rendez-vous avec Dr. {{ appointment.doctor.username }}</h2>
+            <h2>Rendez-vous avec Mr. {{ appointment.namePatient }}</h2>
             <b>{{ appointment.prestation.name }} - {{ appointment.prestation.price }}€</b> <br>
-            <p>{{ appointment.prestation.description }}</p><br>
+            <p>{{ appointment.prestation.description }}</p>
             {% if appointment.state == constant('App\\Entity\\Appointment::STATUS_UNPAID') %}
-                <em>Le paiement n'a pas été pré-autorisé. Cliquez ici pour le faire : <a class="text-danger" href="{{ url('reserver_payer', {"idAppointment": appointment.id}) }}">autoriser le prélévement</a></em>
+                <em>Le paiement n'a pas été autorisé. La consultation n'est pas encore payée.</em>
             {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_PAID') %}
-            {# <em><a class="text-danger" href="#">Déclarer une erreur</a></em>#}
+                <em>La consultation a été payée, vous pouvez accepter le patient.</em>
             {% endif %}
         </div>
         <div class="col-lg-1"></div>
@@ -37,11 +37,13 @@
 
 
             {% if appointment.state == constant('App\\Entity\\Appointment::STATUS_UNPAID') %}
-                <em>Le paiement doit être autorisé avant de fixer une date. <a class="text-danger" href="{{ url('reserver_payer', {"idAppointment": appointment.id}) }}">Autoriser le prélévement</a></em>
+                En attente du paiement du client.
             {% elseif appointment.state == constant('App\\Entity\\Appointment::STATUS_PAID') %}
                 <br><br>
                 <a class="btn btn-outline-danger" href="#">Signaler un problème</a>
             {% endif %}
         </div>
     </div>
+    {{ dump(appointment) }}
+
 {% endblock %}

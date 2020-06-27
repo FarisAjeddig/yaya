@@ -77,11 +77,6 @@ class User extends BaseUser
     private $prestations;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\City", mappedBy="users")
-     */
-    private $city;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Appointment", mappedBy="buyer")
      */
     private $appointmentAsBuyer;
@@ -95,6 +90,31 @@ class User extends BaseUser
      * @ORM\OneToMany(targetEntity="App\Entity\Appointment", mappedBy="doctor")
      */
     private $appointmentAsDoctor;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $matriculeDoctor;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $enabledByAdmin = false;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\City", inversedBy="users")
+     */
+    private $city;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $lowerPrice=100000;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $picture;
 
     /**
      * @return float
@@ -208,10 +228,14 @@ class User extends BaseUser
         $this->type_doctor = $type_doctor;
     }
 
+    public function clearTypeDoctor(){
+        $this->type_doctor->clear();
+    }
+
     /**
      * @return bool
      */
-    public function isIsDoctor(): bool
+    public function getIsDoctor(): bool
     {
         return $this->is_doctor;
     }
@@ -246,7 +270,6 @@ class User extends BaseUser
         parent::__construct();
         $this->type_doctor = new ArrayCollection();
         $this->prestations = new ArrayCollection();
-        $this->city = new ArrayCollection();
         $this->appointmentAsBuyer = new ArrayCollection();
         $this->appointmentAsPatient = new ArrayCollection();
         $this->appointmentAsDoctor = new ArrayCollection();
@@ -301,37 +324,6 @@ class User extends BaseUser
             // set the owning side to null (unless already changed)
             if ($prestation->getDoctor() === $this) {
                 $prestation->setDoctor(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|City[]
-     */
-    public function getCity(): Collection
-    {
-        return $this->city;
-    }
-
-    public function addCity(City $city): self
-    {
-        if (!$this->city->contains($city)) {
-            $this->city[] = $city;
-            $city->setUsers($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCity(City $city): self
-    {
-        if ($this->city->contains($city)) {
-            $this->city->removeElement($city);
-            // set the owning side to null (unless already changed)
-            if ($city->getUsers() === $this) {
-                $city->setUsers(null);
             }
         }
 
@@ -427,6 +419,66 @@ class User extends BaseUser
                 $appointmentAsDoctor->setDoctor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMatriculeDoctor(): ?string
+    {
+        return $this->matriculeDoctor;
+    }
+
+    public function setMatriculeDoctor(?string $matriculeDoctor): self
+    {
+        $this->matriculeDoctor = $matriculeDoctor;
+
+        return $this;
+    }
+
+    public function getEnabledByAdmin(): ?bool
+    {
+        return $this->enabledByAdmin;
+    }
+
+    public function setEnabledByAdmin(bool $enabledByAdmin): self
+    {
+        $this->enabledByAdmin = $enabledByAdmin;
+
+        return $this;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getLowerPrice(): ?float
+    {
+        return $this->lowerPrice;
+    }
+
+    public function setLowerPrice(?float $lowerPrice): self
+    {
+        $this->lowerPrice = $lowerPrice;
+
+        return $this;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(?string $picture): self
+    {
+        $this->picture = $picture;
 
         return $this;
     }

@@ -124,6 +124,10 @@ class AdminController extends AbstractController
         $em->remove($user);
         $em->flush();
 
+        if ($user->getIsDoctor() == true){
+            return $this->redirectToRoute('admin_doctors');
+        }
+
         return $this->redirectToRoute('admin_users');
     }
 

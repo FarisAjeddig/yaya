@@ -31,4 +31,12 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/delete/prestation/, role: ROLE_USER }
+        - { path: ^/edit/prestation/, role: ROLE_USER }
+        - { path: ^/profile/info/doctor, role: ROLE_USER }
+        - { path: ^/profile/edit, role: ROLE_USER }
+        - { path: ^/mes-rendez-vous, role: ROLE_USER }
+        - { path: ^/payer/, role: ROLE_USER }
+        - { path: ^/reserver/, role: ROLE_USER }
+        - { path: ^/admin/, role: ROLE_ADMIN }
 #        - { path: ^/admin/, role: ROLE_ADMIN }

@@ -116,6 +116,7 @@
             <div class="col-xl-5 offset-1 apply_form_area" style="padding-top: inherit">
                 <form action="{{ path("fos_user_security_check") }}" class="form-group apply_form" method="post">
                     <h3>Déjà un compte ?</h3>
+                    {# TODO : fix ce formulaire (check FOS User Bundle) #}
                     <h4 class="text-center">Connexion</h4>
                     <label for="username" style="font-size: 18px">Adresse mail</label>
                     <input type="text" class="form-control" id="username" name="_username" value="" required="required" autocomplete="username" />
@@ -126,7 +127,6 @@
                     <br><br>
                     {#            <input type="checkbox" class="form-control" id="remember_me" name="_remember_me" value="on" />#}
                     {#            <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>#}
-
                     <input type="submit" class="form-control genric-btn success btn-block" id="_submit" name="_submit" value="Connexion" />
                 </form>
             </div>

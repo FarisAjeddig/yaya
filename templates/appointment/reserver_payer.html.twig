@@ -22,22 +22,43 @@
         <div class="col-md-4 text-center" style="padding-top: 1%">
             <h2>{{ prestation.name }} avec Dr. {{ appointment.doctor.username }}</h2>
             <p>{{ prestation.description }}</p><br><br>
-            <h3>Détails sur la réservation</h3>
+            <h3>Détails sur le patient</h3>
             <i class="fa fa-phone"> </i> {{ appointment.phoneNumberPatient }}&nbsp;&nbsp;
             <i class="fa fa-envelope"> </i> {{ appointment.emailPatient }}<br>
             <b>{{ appointment.namePatient }}</b>
 
         </div>
         <div class="col-md-2"></div>
+
         <div class="col-md-4 text-center"><br><br>
-            <h3>{{ prestation.price }}€ + 3€ frais de gestion</h3>
-            {# TODO Faire un tableau récapitulatif du prix#}
+            <h3>{{ prestation.price + 3 }} €</h3>
             {{ form_start(form, {attr: {id: form.vars.id}}) }}
             <div class="form-group">
                 <label for="card-element">
                     Carte de crédit ou de débit <br>
-
                 </label>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Article</th>
+                        <th>Prix</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>{{ prestation.name }}</td>
+                        <th scope="row">{{ prestation.price }}€</th>
+                    </tr>
+                    <tr>
+                        <td>Frais de gestion</td>
+                        <th scope="row">3€</th>
+                    </tr>
+                    <tr>
+                        <th>Total</th>
+                        <th>{{ prestation.price + 3 }}€</th>
+                    </tr>
+                    </tbody>
+                </table>
                 <div id="card-element" class="form-control"></div>
                 <div id="card-errors" class="help-block" role="alert"></div>
             </div>
@@ -45,8 +66,6 @@
             {{ form_end(form) }}
         </div>
     </div>
-    {{ dump(appointment) }}
-    {{ dump(prestation) }}
 
 
     <script type="text/javascript">
@@ -55,7 +74,23 @@
 
         var stripe = Stripe('{{ stripe_public_key }}');
         var elements = stripe.elements();
-        var card = elements.create('card');
+        var card = elements.create('card', {
+            hidePostalCode: true,
+            style: {
+                base: {
+                    iconColor: '#666EE8',
+                    color: '#31325F',
+                    lineHeight: '40px',
+                    fontWeight: 300,
+                    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                    fontSize: '15px',
+
+                    '::placeholder': {
+                        color: '#CFD7E0',
+                    },
+                },
+            }
+        });
 
         card.mount('#card-element');
         card.addEventListener('change', function(event) {

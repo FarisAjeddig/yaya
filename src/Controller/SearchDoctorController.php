@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Appointment;
 use App\Entity\City;
+use App\Entity\Country;
 use App\Entity\Prestation;
 use App\Entity\TypeDoctor;
 use App\Entity\User;
@@ -18,30 +19,53 @@ use Symfony\Component\Routing\Annotation\Route;
 class SearchDoctorController extends AbstractController
 {
     /**
-     * @Route("/search/{idTypeDoctor}/{idCity}", name="search_doctor")
+     * @Route("/search/{idTypeDoctor}/{idCity}/{price}", name="search_doctor")
      */
-    public function searchDoctorAction(Request $request, $idTypeDoctor, $idCity)
+    public function searchDoctorAction(Request $request, $idTypeDoctor=0, $idCity=0, $price=100)
     {
-        $doctors = $this->getDoctrine()->getRepository(User::class)->findBy(['is_doctor' => true]);
+        $typesDoctor = $this->getDoctrine()->getRepository(TypeDoctor::class)->findAll();
         $typeDoctor = $this->getDoctrine()->getRepository(TypeDoctor::class)->find($idTypeDoctor);
+        $countrys = $this->getDoctrine()->getRepository(Country::class)->findAll();
         $city = $this->getDoctrine()->getRepository(City::class)->find($idCity);
+        $doctors = $this->getDoctrine()->getRepository(User::class)->findBy(['is_doctor' => true]);
+
+        $filterDoctors = [];
+        /** @var User $doc */
+        foreach ($doctors as $doc){
+            $sameType = false;
+            foreach ($doc->getTypeDoctor() as $type){
+                if ($type->getId() == $idTypeDoctor){
+                    $sameType = true;
+                }
+            }
+            if ($sameType && ($city == $doc->getCity()) && $price > $doc->getLowerPrice() && count($doc->getPrestations())>0){
+                $filterDoctors[] = $doc;
+            }
+        }
 
         return $this->render('search_doctor/index.html.twig', [
-            'doctors' => $doctors,
+            'doctors' => $filterDoctors,
             'typeDoctor' => $typeDoctor,
+            'typesDoctor' => $typesDoctor,
+            'countrys' => $countrys,
             'city' => $city
         ]);
     }
+
+
 
     /**
      * @Route("/doctor/{id}", name="doctor_profile")
      */
     public function doctorProfileAction($id){
-        // TODO : Vérifier que c'est bien un docteur
+        /** @var User $doctor */
         $doctor = $this->getDoctrine()->getRepository(User::class)->find($id);
-
-        return $this->render('search_doctor/profile_doctor.html.twig', [
-            'doctor' => $doctor
-        ]);
+        if ($doctor->getIsDoctor()){
+            return $this->render('search_doctor/profile_doctor.html.twig', [
+                'doctor' => $doctor
+            ]);
+        } else {
+            return $this->redirectToRoute('homepage');
+        }
     }
 }

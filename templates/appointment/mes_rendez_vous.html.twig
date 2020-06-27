@@ -40,7 +40,7 @@
                         Rendez-vous avec M. {{ appointment.buyer.username }} <br>
                         La date n'a pas encoré été fixée. <b>Proposer une date</b><br>
                         {{ appointment.prestation.name }}<br>
-                        <a class="text-info" href="{{ url('doctor_rendez_vous_individuel', {'id': appointment.id}) }}">Voir le détail</a>
+                        <a class="text-info" href="{{ url('rendez_vous_individuel', {'id': appointment.id}) }}">Voir le détail</a>
                     </div><br>
                 {% endfor %}
             </div>

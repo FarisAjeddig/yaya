@@ -37,7 +37,8 @@
                 <a href="{{ url('profile_edit_phone') }}" style="margin-left: 20px"><b><i class="ti-pencil"></i></b></a>
             </p>
         </div>
-
-
+        {% if user.is_doctor %}
+            {{ render(controller('App\\Controller\\DefaultController::profileEditPictureAction')) }}
+        {% endif %}
     </div>
 </div>

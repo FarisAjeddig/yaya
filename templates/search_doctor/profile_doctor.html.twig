@@ -16,8 +16,8 @@
     </div>
 
     <div class="container-fluid row">
-        <div class="col-md-4">
-            <img src="{{ '/build/images/doctor-single.jpg' }}" height="auto" width="100%" alt="Photo de {{ doctor.username }}">
+        <div class="col-md-4" style="padding-left: 0">
+            <img src="{{ asset('uploads/pictures/' ~ doctor.picture) }}" height="auto" width="100%" alt="Photo de {{ doctor.username }}" style="padding: 0 !important;">
         </div>
         <div class="col-md-4" style="padding-top: 1%;">
             <h2>Dr. {{ doctor.username }}</h2><br>

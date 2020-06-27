@@ -11,12 +11,14 @@ use App\Form\DoctorType;
 use App\Form\PrestationFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -96,8 +98,10 @@ class DefaultController extends AbstractController
         if ($request->isMethod('POST')){
             $alreadyExistUser = $this->getDoctrine()->getRepository(User::class)->findBy(['emailCanonical' => $doc->getEmailCanonical()]);
             if ($alreadyExistUser != []){
-                // L'adresse mail est déjà utilisée TODO
-                die;
+                $this->get('session')->getFlashBag()->add('danger', 'L\'adresse mail est déjà utilisée.');
+                return $this->render('default/register/doctor_register.html.twig', [
+                    'form' => $form->createView()
+                ]);
             }
             $doc->setEnabled(true);
             $doc->setIsDoctor(true);
@@ -135,9 +139,8 @@ class DefaultController extends AbstractController
             $em->persist($doc);
             $em->flush();
 
-            return $this->render('bundles/FOSUserBundle/Profile/show.html.twig', [
-                'user' => $doc
-            ]);
+            //TODO : Renvoyer vers la page de connexion instead ou gérer automatiquement la connexion.
+            return $this->redirectToRoute('fos_user_security_login');
         }
 
         return $this->render('default/register/doctor_register.html.twig', [
@@ -186,6 +189,9 @@ class DefaultController extends AbstractController
             ->add("bankAccountNumber", TextType::class, [
                 'label' => "Votre IBAN Français (Ne sera utilisé que pour vous reverser les paiements de vos consultations)"
             ])
+            ->add("matriculeDoctor", TextType::class, [
+                'label' => "Numéro de matricule officiel"
+            ])
             ->add("adress", TextType::class, [
                 'label' => "Adresse des consultation"
             ])
@@ -193,7 +199,7 @@ class DefaultController extends AbstractController
                 'choices' => $citys,
                 'attr' => ['class' => 'js-example-basic-multiple'],
                 'mapped' => false,
-                'data' => $user->getCity()[0] !== null ? $user->getCity()[0]->getName() : null
+                'data' => $user->getCity() !== null ? $user->getCity()->getName() : null
             ])
             ->add("desc", TextareaType::class, [
                 "label" => "Informations complémentaires",
@@ -205,8 +211,6 @@ class DefaultController extends AbstractController
         /** @var Prestation $prestation */
         $prestation = new Prestation();
         $formPrestation = $this->createForm(PrestationFormType::class, $prestation);
-        // TODO : Modifier le classe user pour ajouter le prix le plus bas des prestations (plus opti)
-
         $form->handleRequest($request);
         $formPrestation->handleRequest($request);
         if ($request->isMethod('POST')){
@@ -215,11 +219,10 @@ class DefaultController extends AbstractController
             if ($form->isSubmitted()){
                 /** @var City $city */
                 $city = $this->getDoctrine()->getRepository(City::class)->find($form->get('city')->getData());
-                // TODO : modifier la class user pour avoir une seul city
-                $user->addCity($city);
+                $user->setCity($city);
                 $repoTypesDoctors = $this->getDoctrine()->getRepository(TypeDoctor::class);
+                $user->clearTypeDoctor();
                 foreach($form->get('types')->getData() as $typeChoosed){
-                    // TODO : reset les types de docteurs avant de les remettre.
                     $user->addTypeDoctor($repoTypesDoctors->find($typeChoosed));
                 }
                 $url = 'https://maps.googleapis.com/maps/api/geocode/json?';
@@ -227,7 +230,13 @@ class DefaultController extends AbstractController
                 $url .= http_build_query($options,'','&');
 
                 if (json_decode(file_get_contents(htmlspecialchars_decode($url)))->results == []) {
-                    dd('L\'adresse est mauvaise'); // TODO : Handle exception
+                    $this->get('session')->getFlashBag()->add('danger', 'L\'adresse n\'est pas reconnue. Sélectionnez l\'adresse dans la liste en dessous.');
+
+                    return $this->render('bundles/FOSUserBundle/Profile/infoDoctor.html.twig', [
+                        'form' => $form->createView(),
+                        'formPrestation' => $formPrestation->createView(),
+                        'user' => $user
+                    ]);
                 } else {
                     $coord = json_decode((file_get_contents(htmlspecialchars_decode($url))))->results[0]->geometry->location;
                 }
@@ -235,6 +244,9 @@ class DefaultController extends AbstractController
                 $user->setLatAdress($coord->lat);
             }
             if ($formPrestation->isSubmitted()){
+                if ($prestation->getPrice() < $user->getLowerPrice() || !$user->getLowerPrice()){
+                    $user->setLowerPrice($prestation->getPrice());
+                }
                 $prestation->setDoctor($user);
                 $user->addPrestation($prestation);
                 $em->persist($prestation);
@@ -299,18 +311,80 @@ class DefaultController extends AbstractController
      * @Route("delete/prestation/confirm/{id}", name="delete_prestation_confirm")
      */
     public function deletePrestationConfirmAction($id, Request $request){
+        /** @var Prestation $prestation */
         $prestation = $this->getDoctrine()->getRepository(Prestation::class)->find($id);
+        /** @var User $user */
         $user = $this->getUser();
 
         if ($prestation->getDoctor() === $user){
             $em = $this->getDoctrine()->getManager();
-            $em->remove($prestation);
+            if ($prestation->getPrice() == $user->getLowerPrice()){
+                $prestations = $user->getPrestations();
+                $lowerPrice = 10000;
+                foreach ($prestations as $presta){
+                    if ($presta != $prestation && $presta->getPrice() < $lowerPrice){
+                        $lowerPrice = $presta->getPrice();
+                    }
+                }
+                $user->setLowerPrice($lowerPrice);
+            }
+
+            $user->removePrestation($prestation);
             $em->persist($user);
             $em->flush();
 
             return $this->redirectToRoute('fos_user_profile_show');
         } else {
+            // TODO
             dd("Vous n'avez pas le droit d'être là");
         }
+    }
+
+    /**
+     * @Route("profile/edit/picture", name="profile_edit_picture")
+     */
+    public function profileEditPictureAction(Request $request){
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $datad = ['file' => null];
+        $form = $this->createFormBuilder($datad)
+            ->add('file', FileType::class, ['label' => "Choisissez une image", 'attr' => ['class' => 'form-control text-center']])
+            ->add('Modifier', SubmitType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form->getData()['file'];
+
+            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            // this is needed to safely include the file name as part of the URL
+            $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+            $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+
+            // Move the file to the directory where brochures are stored
+            try {
+                $file->move(
+                    $this->getParameter('pictures_directory'),
+                    $newFilename
+                );
+            } catch (FileException $e) {
+                // ... handle exception if something happens during file upload
+            }
+
+            $user->setPicture($newFilename);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirectToRoute('fos_user_profile_show');
+        }
+
+        return $this->render("bundles/FOSUserBundle/Profile/editPicture.html.twig", [
+            'form' => $form->createView(),
+            'user' => $user
+        ]);
     }
 }

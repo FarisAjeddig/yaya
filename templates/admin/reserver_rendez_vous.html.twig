@@ -1,21 +1,11 @@
 {% extends 'base.html.twig' %}
-
 {% block body %}
-    <div class="bradcam_area bradcam_bg_3">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="bradcam_text">
-                        <h3>Administration - Réserver un rendez-vous</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container-fluid row p-5">
-        <div class="col-lg-3"></div>
-        <div class="col-lg-6 text-center">
+    {% embed 'admin/base.html.twig' %}
+        {% block secondTitle %}
+            Admin - Réserver un rendez-vous
+        {% endblock %}
+        {% block bodyAdmin %}
 
-        </div>
-    </div>
+        {% endblock %}
+    {% endembed %}
 {% endblock %}

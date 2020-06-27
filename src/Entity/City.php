@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -28,14 +30,15 @@ class City
     private $country;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="city")
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="city")
      */
     private $users;
 
-    public function getId(): ?int
+    public function __construct()
     {
-        return $this->id;
+        $this->users = new ArrayCollection();
     }
+
 
     public function getName(): ?string
     {
@@ -61,15 +64,50 @@ class City
         return $this;
     }
 
-    public function getUsers(): ?User
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
     {
         return $this->users;
     }
 
-    public function setUsers(?User $users): self
+    public function addUser(User $user): self
     {
-        $this->users = $users;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setCity($this);
+        }
 
         return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getCity() === $this) {
+                $user->setCity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
+    {
+        $this->id = $id;
     }
 }
