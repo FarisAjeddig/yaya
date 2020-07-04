@@ -23,6 +23,9 @@
         {% endif %}
         <div class="col-lg-4 text-center">
             <h3>Pour un proche</h3><br>
+            {% if (appointmentsAsBuyer==[]) %}
+                Vous n'avez pas encore pris de rendez-vous
+            {% endif %}
             {% for appointment in appointmentsAsBuyer %}
                 <div class="generic-blockquote">
                     Rendez-vous avec Dr. {{ appointment.doctor.username }} <br>
