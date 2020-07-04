@@ -1,0 +1,264 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Demander un don</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-5">
+            <!-- apply_form_area -->
+            <div class="apply_form_area" style="padding-top: 50px;">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-12">
+                            <div class="row apply_form">
+                                <div class="col-lg-12">
+                                    <div class="apply_info_text text-center">
+                                        <h3>Demander un don</h3>
+                                        <p>Remplissez ce formulaire afin de demander un don. <br>
+                                        On vous demandera avec quel médecin et quelle consultation vous souhaitez demander un don.</p>
+                                    </div>
+                                </div>
+                                {{ form_start(form) }}
+
+                                <div class="col-md-12">
+                                    <div class="single_field">
+                                        {{ form_label(form.name, 'Nom et prénom') }}
+                                        {{ form_widget(form.name, {'attr': {'class' : '', 'placeholder' : 'Nom et prénom'}}) }}
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="single_field">
+                                        {{ form_label(form.phoneNumber, 'Numéro de téléphone') }}
+                                        {{ form_widget(form.phoneNumber, {'attr': {'class' : '', 'placeholder' : 'Numéro de téléphone'}}) }}
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="single_field">
+                                        {{ form_label(form.address, 'Adresse') }}
+                                        {{ form_widget(form.address, {'attr': {'class' : '', 'placeholder' : 'Adresse'}}) }}
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="single_field">
+                                        {{ form_label(form.birthday, 'Date de naissance') }}
+                                        {{ form_widget(form.birthday, {'attr': {'class' : '', 'placeholder' : 'Date de naissance', 'id': 'datepîcker'}}) }}
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    {{ form_label(form.pictureFile, 'Votre photo') }}<br>
+                                    {{ form_widget(form.pictureFile, {'attr': {'class' : '', 'placeholder' : 'Nom et prénom'}}) }}
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="submit_btn">
+                                        {{ form_row(form.Envoyer, {'attr': {'class': 'boxed-btn3'}}) }}
+                                    </div>
+                                </div>
+
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+{#        <div class="col-lg-1"></div>#}
+        <div class="col-lg-6">
+            <style>
+                // {
+                    -webkit-box-sizing: border-box;
+                    -moz-box-sizing: border-box;
+                    box-sizing: border-box;
+                    outline: none;
+                }
+
+                //body {
+                    margin: 0;
+                    padding: 30px 0;
+                    font-family: 'Roboto', sans-serif;
+                    background: #F1F2F6;
+                }
+
+                //h1 {
+                      text-align: center;
+                      font-weight: 300;
+                      color: #777
+                  }
+
+                //h1 span {
+                      font-weight: 600;
+                  }
+
+                .timeline-container {
+                    width: 80%;
+                    padding: 50px 0;
+                    margin: 50px auto;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .timeline-container:before { /*This is the line down the middle*/
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 50%;
+                    margin-left: -1px;
+                    width: 2px;
+                    height: 100%;
+                    background: #CCD1D9;
+                    z-index: 1
+                }
+                .timeline-block {
+                    width: -webkit-calc(50% + 8px);
+                    width: -moz-calc(50% + 8px);
+                    width: calc(50% + 8px);
+                    display: -webkit-box;
+                    display: -webkit-flex;
+                    display: -moz-box;
+                    display: flex;
+                    -webkit-box-pack: justify;
+                    -webkit-justify-content: space-between;
+                    -moz-box-pack: justify;
+                    justify-content: space-between;
+                    clear: both;
+                }
+                .timeline-block-right {
+                    float: right;
+                }
+                .timeline-block-left {
+                    float: left;
+                    direction: rtl
+                }
+                .marker {
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 50%;
+                    border: 2px solid #F5F7FA;
+                    background: #4DD0E1;
+                    margin-top: 10px;
+                    z-index: 9999
+                }
+                .timeline-content {
+                    width: 95%;
+                    padding: 0 15px;
+                    color: #666
+                }
+                .timeline-content h3 {
+                    margin-top: 5px;
+                    margin-bottom: 5px;
+                    font-size: 25px;
+                    font-weight: 500
+                }
+                .timeline-content span {
+                    font-size: 15px;
+                    color: #a4a4a4;
+                }
+                .timeline-content p {
+                    font-size: 14px;
+                    line-height: 1.5em;
+                    word-spacing: 1px;
+                    color: #888;
+                }
+                @media screen and (max-width: 768px) {
+                    .timeline-container:before {
+                        left: 8px;
+                        width: 2px;
+                    }
+                    .timeline-block {
+                        width: 100%;
+                        margin-bottom: 30px;
+                    }
+                    .timeline-block-right {
+                        float: none;
+                    }
+                    .timeline-block-left {
+                        float: none;
+                        direction: ltr;
+                    }
+                }
+            </style>
+
+            <div class="timeline-container">
+                <div class="timeline-block timeline-block-right">
+                    <div class="marker"></div>
+                    <div class="timeline-content">
+                        <h3>Demandez un don</h3>
+                        <span>Pour vous faire soigner</span>
+                        <p>Remplissez minitieusement l'ensemble des informations demandées pour avoir un maximum de chance qu'un généreux donateur vous choisisse</p>
+                    </div>
+                </div>
+
+                <div class="timeline-block timeline-block-left">
+                    <div class="marker"></div>
+                    <div class="timeline-content">
+                        <h3>Offrir un soin</h3>
+                        <span>En attente d'un donateur</span>
+                        <p>Votre demande sera disponible sur la page Offrir un soin</p>
+                    </div>
+                </div>
+
+                <div class="timeline-block timeline-block-right">
+                    <div class="marker"></div>
+                    <div class="timeline-content">
+                        <h3>Réception</h3>
+                        <span>Un généreux donateur a été trouvé !</span>
+                        <p>Vous êtes immédiatement contactés par SMS afin de vous préciser que quelqu'un a payer pour votre consultation chez le médecin
+                        Vous n'avez plus qu'à le contacter pour prendre rendez-vous</p>
+                    </div>
+                </div>
+
+                <div class="timeline-block timeline-block-left">
+                    <div class="marker"></div>
+                    <div class="timeline-content">
+                        <h3>Faites vous soigner</h3>
+                        <span>Tout est réglé</span>
+                        <p>Plus qu'à aller chez le médecin comme vous l'aurez convenu avec lui, le rendez-vous est payé</p>
+                    </div>
+                </div>
+
+                <div class="timeline-block timeline-block-right">
+                    <div class="marker"></div>
+                    <div class="timeline-content">
+                        <h3>Remerciez le donateur</h3>
+                        <span>C'est toujours sympa !</span>
+                        <p>N'hésitez pas à envoyer un message au donateur qui a payé votre consultation pour le remercier !</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        // Using this tutorial for autocomplete address : https://www.youtube.com/watch?v=Rpzp0yCAmq4
+        function activatePlacesSearch(){
+            var options = { componentRestrictions: { country: "fr"} };
+            var input = document.getElementById("form_address");
+            var autocomplete = new google.maps.places.Autocomplete(input, options);
+        }
+    </script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuZviasKN0VON99Nz4I8b_tu6YZDcmrsw&libraries=places&callback=activatePlacesSearch&libraries=places"></script>
+
+{% endblock %}

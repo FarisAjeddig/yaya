@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text">
+                        <h3>Demander un don : choisir le médecin</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <br><br>
+    <div class="container-fluid row">
+        <div class="col-lg-8 offset-2 payment_form white-bg wow fadeInDown" data-wow-duration="1.2s" data-wow-delay=".2s">
+            <div class="info text-center">
+                <h4>Trouver <b>le médecin</b></h4>
+                <p>En deux clics</p>
+            </div>
+            <div class="form">
+                <div class="row text-center">
+                    <div class="col-lg-2"></div>
+                    <div class="col-xl-4">
+                        <div class="single_input">
+                            <select class="form-control wide js-example-tags" id="selectTypeDoctor">
+                                {% for type in typesDoctor %}
+                                    <option value="{{ type.id }}">{{ type.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <script>
+                                $(".js-example-tags").select2({
+                                    tags: true,
+                                    placeholder: "Type de médecin"
+                                });
+                            </script>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="col-xl-4">
+                        <div class="single_input">
+                            <select class="form-control js-example-basic-single" name="city" id="selectCity">
+                                {% for country in countrys %}
+                                    <optgroup label="{{ country.name }}">
+                                        {% for city in country.cities %}
+                                            <option value="{{ city.id }}">{{ city.name }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            </select>
+                            <script>
+                                $(document).ready(function() {
+                                    $('.js-example-basic-single').select2({
+                                        placeholder: "Ville"
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p></p>
+            <div class="submit_btn text-center">
+                <button class="boxed-btn3" type="submit" id="SeeListDoctors">Voir la liste</button>
+            </div>
+            <script>
+                $(document).ready(function(){
+                    $("#SeeListDoctors").click(function() {
+                        selectedCountry = $("#selectCity option:selected").val();
+                        selectedType = $("#selectTypeDoctor option:selected").val();
+
+                        selectedCountry === undefined ? selectedCountry = 0 : console.log("ok country");
+                        selectedType === undefined ? selectedType = 0 : console.log("ok type");
+
+                        url = "{{ url('homepage') }}demander-un-don/" + {{ donationRequest.id }} + "/choisir-medecin/" + selectedType + "/" + selectedCountry + "/";
+                        window.location.replace(url)
+                    })
+                })
+            </script>
+        </div>
+    </div>
+    <br><br>
+
+    <div class="container-fluid row" style="background-color: #eef2f6; padding-top: 3%; padding-bottom: 3%;">
+        {% if doctors!=[] %}
+            {% for doctor in doctors %}
+                <div class="col-lg-5 col-md-5 col-sm-10" style="background-color: #ffffff; border: solid 1px #d4dde8; border-radius: 5px; margin-left: 4%; margin-right: 4%; margin-bottom: 2%">
+                    <div class="row">
+                        <div class="col-sm-6" style="padding-top: 2%;">
+                            <h3 class="text-center" >Dr. {{ doctor.username }}</h3><br>
+                            <b>Description : </b><p class="text-center">{{ doctor.desc }}</p><br>
+                            <b>Diplômes : </b><p class="text-center">{{ doctor.diploma }}</p><br>
+                            <p>Consultation à partir de {{ doctor.lowerPrice }}€</p><br>
+                            <p style="text-align: center">
+                                <a href="{{ url('doctor_profile', {id: doctor.id}) }}" class="btn btn-success">Voir plus</a>
+                            </p>
+                        </div>
+                        <div class="col-sm-6" style="padding: 0 !important;">
+                            <img src="{{ asset('uploads/pictures/' ~ doctor.picture) }}" height="auto" width="100%" alt="Photo de {{ doctor.username }}">
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-lg-12">
+                <p class="text-center">Aucun médecin trouvé... Élargissez vos critères de recherche</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

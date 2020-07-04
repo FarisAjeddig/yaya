@@ -117,6 +117,16 @@ class User extends BaseUser
     private $picture;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\DonationRequest", mappedBy="doctor")
+     */
+    private $donationRequestsAsDoctor;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\DonationRequest", mappedBy="buyer")
+     */
+    private $donationRequestsAsBuyer;
+
+    /**
      * @return float
      */
     public function getLongAdress(): float
@@ -273,6 +283,8 @@ class User extends BaseUser
         $this->appointmentAsBuyer = new ArrayCollection();
         $this->appointmentAsPatient = new ArrayCollection();
         $this->appointmentAsDoctor = new ArrayCollection();
+        $this->donationRequestsAsDoctor = new ArrayCollection();
+        $this->donationRequestsAsBuyer = new ArrayCollection();
         // your own logic
     }
 
@@ -479,6 +491,68 @@ class User extends BaseUser
     public function setPicture(?string $picture): self
     {
         $this->picture = $picture;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|DonationRequest[]
+     */
+    public function getDonationRequestsAsDoctor(): Collection
+    {
+        return $this->donationRequestsAsDoctor;
+    }
+
+    public function addDonationRequestsAsDoctor(DonationRequest $donationRequestsAsDoctor): self
+    {
+        if (!$this->donationRequestsAsDoctor->contains($donationRequestsAsDoctor)) {
+            $this->donationRequestsAsDoctor[] = $donationRequestsAsDoctor;
+            $donationRequestsAsDoctor->setDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDonationRequestsAsDoctor(DonationRequest $donationRequestsAsDoctor): self
+    {
+        if ($this->donationRequestsAsDoctor->contains($donationRequestsAsDoctor)) {
+            $this->donationRequestsAsDoctor->removeElement($donationRequestsAsDoctor);
+            // set the owning side to null (unless already changed)
+            if ($donationRequestsAsDoctor->getDoctor() === $this) {
+                $donationRequestsAsDoctor->setDoctor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|DonationRequest[]
+     */
+    public function getDonationRequestsAsBuyer(): Collection
+    {
+        return $this->donationRequestsAsBuyer;
+    }
+
+    public function addDonationRequestsAsBuyer(DonationRequest $donationRequestsAsBuyer): self
+    {
+        if (!$this->donationRequestsAsBuyer->contains($donationRequestsAsBuyer)) {
+            $this->donationRequestsAsBuyer[] = $donationRequestsAsBuyer;
+            $donationRequestsAsBuyer->setBuyer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDonationRequestsAsBuyer(DonationRequest $donationRequestsAsBuyer): self
+    {
+        if ($this->donationRequestsAsBuyer->contains($donationRequestsAsBuyer)) {
+            $this->donationRequestsAsBuyer->removeElement($donationRequestsAsBuyer);
+            // set the owning side to null (unless already changed)
+            if ($donationRequestsAsBuyer->getBuyer() === $this) {
+                $donationRequestsAsBuyer->setBuyer(null);
+            }
+        }
 
         return $this;
     }
