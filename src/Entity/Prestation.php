@@ -43,9 +43,15 @@ class Prestation
      */
     private $appointments;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\DonationRequest", mappedBy="prestation")
+     */
+    private $donationRequests;
+
     public function __construct()
     {
         $this->appointments = new ArrayCollection();
+        $this->donationRequests = new ArrayCollection();
     }
 
 
@@ -127,6 +133,37 @@ class Prestation
             // set the owning side to null (unless already changed)
             if ($appointment->getPrestation() === $this) {
                 $appointment->setPrestation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|DonationRequest[]
+     */
+    public function getDonationRequests(): Collection
+    {
+        return $this->donationRequests;
+    }
+
+    public function addDonationRequest(DonationRequest $donationRequest): self
+    {
+        if (!$this->donationRequests->contains($donationRequest)) {
+            $this->donationRequests[] = $donationRequest;
+            $donationRequest->setPrestation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDonationRequest(DonationRequest $donationRequest): self
+    {
+        if ($this->donationRequests->contains($donationRequest)) {
+            $this->donationRequests->removeElement($donationRequest);
+            // set the owning side to null (unless already changed)
+            if ($donationRequest->getPrestation() === $this) {
+                $donationRequest->setPrestation(null);
             }
         }
 

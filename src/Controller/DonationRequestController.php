@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\City;
 use App\Entity\Country;
 use App\Entity\DonationRequest;
+use App\Entity\Prestation;
 use App\Entity\TypeDoctor;
 use App\Entity\User;
 use App\Form\DonationRequestType;
@@ -59,6 +60,8 @@ class DonationRequestController extends AbstractController
             $newDonationRequest->setPicture($newFilename);
             $newDonationRequest->setState(DonationRequest::STATE_CREATED);
 
+            // TODO : Envoyer un mail avec le lien pour suivre la demande et/ou la compléter.
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($newDonationRequest);
             $em->flush();
@@ -108,5 +111,47 @@ class DonationRequestController extends AbstractController
             'typesDoctor' => $typesDoctor,
             'countrys' => $countrys
         ]);
+    }
+
+    /**
+     * @Route("/demander-un-don/{idDonationRequest}/choix-prestation/{idPrestation}/{idDoctor}", name="demander_don_choix_prestation")
+     */
+    public function demanderDonChoixPrestationAction($idDonationRequest, $idPrestation, $idDoctor){
+        /** @var DonationRequest $donationRequest */
+        $donationRequest = $this->getDoctrine()->getRepository(DonationRequest::class)->find($idDonationRequest);
+        /** @var Prestation $prestation */
+        $prestation = $this->getDoctrine()->getRepository(Prestation::class)->find($idPrestation);
+        /** @var User $doctor */
+        $doctor = $this->getDoctrine()->getRepository(User::class)->find($idDoctor);
+
+        $donationRequest->setPrestation($prestation);
+        $donationRequest->setDoctor($doctor);
+        $donationRequest->setState(DonationRequest::STATE_COMPLETE);
+
+        // TODO : Envoyer un mail / sms à l'administrateur pour lui dire de valider ça.
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($donationRequest);
+        $em->flush();
+
+        $this->get('session')->getFlashBag()->add('success', 'Le choix de la consultation a bien été enregistré.');
+
+        return $this->redirectToRoute('demander_un_don_recapitulatif', [
+            'idDonationRequest' => $idDonationRequest
+        ]);
+    }
+
+    /** @Route("/demander-un-don/recapitulatif/{idDonationRequest}", name="demander_un_don_recapitulatif") */
+    public function demanderUnDonRecapitulatifAction($idDonationRequest){
+        /** @var DonationRequest $donationRequest */
+        $donationRequest = $this->getDoctrine()->getRepository(DonationRequest::class)->find($idDonationRequest);
+
+        if ($donationRequest->getState() == DonationRequest::STATE_CREATED){
+            return $this->redirectToRoute('demander_don_choisir_medecin', ['idDonationRequest' => $idDonationRequest]);
+        } else {
+            return $this->render('donation_request/recapitulatif.html.twig', [
+                'donationRequest' => $donationRequest
+            ]);
+        }
     }
 }

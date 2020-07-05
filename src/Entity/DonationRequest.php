@@ -61,6 +61,11 @@ class DonationRequest
      */
     private $buyer;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Prestation", inversedBy="donationRequests")
+     */
+    private $prestation;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -158,6 +163,18 @@ class DonationRequest
     public function setBuyer(?User $buyer): self
     {
         $this->buyer = $buyer;
+
+        return $this;
+    }
+
+    public function getPrestation(): ?Prestation
+    {
+        return $this->prestation;
+    }
+
+    public function setPrestation(?Prestation $prestation): self
+    {
+        $this->prestation = $prestation;
 
         return $this;
     }

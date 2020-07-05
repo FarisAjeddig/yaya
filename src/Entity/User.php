@@ -114,7 +114,7 @@ class User extends BaseUser
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $picture;
+    private $picture="doctor-single.jpg";
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\DonationRequest", mappedBy="doctor")
