@@ -11,6 +11,7 @@ use App\Form\DoctorType;
 use App\Form\PrestationFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -389,22 +390,76 @@ class DefaultController extends AbstractController
     }
 
     /** @Route("/contact", name="contact") */
-    public function contactAction(){
-        return $this->render('default/contact.html.twig');
+    public function contactAction(Request $request, \Swift_Mailer $mailer){
+
+        $defaultData = [
+            'name' => '',
+            'email' => '',
+            'phone' => '',
+            'message' => ''
+        ];
+        $form = $this->createFormBuilder($defaultData)
+            ->add('name', TextType::class, [
+                'attr' => ['class' => 'form-control', 'placeholder' => "Nom et prénom"]
+            ])
+            ->add('email', EmailType::class, [
+                'attr' => ['class' => 'form-control', 'placeholder' => "Votre email"]
+            ])
+            ->add('phone', TextType::class, [
+                'attr' => ['class' => 'form-control', 'placeholder' => "Numéro de téléphone"]
+            ])
+            ->add('message', TextareaType::class, [
+                'attr' => ['class' => 'form-control w-100', 'rows' => 9, 'cols' => 30, 'placeholder' => "Entrez votre message ici"],
+            ])
+            ->add('send', SubmitType::class, [
+                'attr' => ['class' => 'button button-contactForm btn_4 boxed-btn']
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // data is an array with "name", "email", and "message" keys
+            $data = $form->getData();
+
+            // Envoi d'un mail à l'administrateur
+            $message = (new \Swift_Message('Un nouveau message a été envoyé sur Afromed.'))
+                ->setFrom('digibinks@gmail.com')
+                ->setTo('fajeddig@hotmail.fr')
+                ->setBody(
+                    $this->renderView(
+                        'admin/emails/contact.html.twig',
+                        ['data' => $data]
+                    ),
+                    'text/html'
+                );
+
+            $mailer->send($message);
+
+            $this->get('session')->getFlashBag()->add('success', 'Le message a bien été envoyé ! On vous recontacte rapidement.');
+
+            return $this->render('default/footerLink/contact.html.twig', [
+                'form' => $form->createView()
+            ]);
+
+        }
+        return $this->render('default/footerLink/contact.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     /** @Route("/CGU-CGV-RGPD", name="CGU_CGV_RGPD") */
     public function CGUCGVRGPDAction(){
-        return $this->render('default/CGU_CGV_RGPD.html.twig');
+        return $this->render('default/footerLink/CGU_CGV_RGPD.html.twig');
     }
 
     /** @Route("/mentions-legales", name="mentions_legales") */
     public function mentionsLegalesAction(){
-        return $this->render('default/mentions_legales.html.twig');
+        return $this->render('default/footerLink/mentions_legales.html.twig');
     }
 
     /** @Route("/qui-sommes-nous", name="qui_sommes_nous") */
     public function quiSommesNousAction(){
-        return $this->render('default/quiSommesNous.html.twig');
+        return $this->render('default/footerLink/quiSommesNous.html.twig');
     }
 }

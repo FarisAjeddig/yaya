@@ -89,10 +89,17 @@
                 </div>
             </header>
 
+
+        {% endblock %}
+        {% block body %}
+        {% endblock %}
+        {% block footer %}
+
+
             {% for type, messages in app.session.flashbag.all() %}
                 <br><br>
                 {% for message in messages %}
-                    <div class="row container-fluid" >
+                    <div class="row container-fluid" style="position:fixed; top: 100px; left: 5%; overflow: hidden" >
                         <div class="col-lg-2"></div>
                         <div class="center alert alert-{{ type }} col-lg-2">
                             {{ message }}
@@ -100,12 +107,6 @@
                     </div>
                 {% endfor %}
             {% endfor %}
-
-        {% endblock %}
-        {% block body %}
-        {% endblock %}
-        {% block footer %}
-
             <!-- footer start -->
             <footer class="footer">
                 <div class="footer_top">

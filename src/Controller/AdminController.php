@@ -6,14 +6,16 @@ use App\Entity\Appointment;
 use App\Entity\City;
 use App\Entity\Country;
 use App\Entity\DonationRequest;
+use App\Entity\Prestation;
 use App\Entity\TypeDoctor;
 use App\Entity\User;
 use App\Form\CityType;
 use App\Form\CountryType;
-use App\Form\DoctorEditByAdminType;
 use App\Form\DoctorType;
+use App\Form\PrestationFormType;
 use App\Form\TypeDoctorType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -45,14 +47,12 @@ class AdminController extends AbstractController
      */
     public function doctors(){
         $docs = $this->getDoctrine()->getRepository(User::class)->findBy(['is_doctor' => true]);
-        return $this->render('admin/doctors.html.twig',[
+        return $this->render('admin/doctors/doctors.html.twig',[
             'docs' => $docs
         ]);
     }
 
-    /**
-     * @Route("/rendez-vous", name="rendez_vous")
-     */
+    /** @Route("/rendez-vous", name="rendez_vous") */
     public function rendezVous(){
         $appointments = $this->getDoctrine()->getRepository(Appointment::class)->findAll();
         return $this->render('admin/rendez_vous.html.twig', [
@@ -68,40 +68,55 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/edit/doctor/{id}", name="edit_doctor")
+     * @Route("/enable-disable/doctor/{id}", name="enable_disable_doctor")
      */
-    public function editDoctor($id, Request $request, \Swift_Mailer $mailer){
+    public function enableDisableDoctor($id){
         /** @var User $user */
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+        $user->setEnabledByAdmin(!($user->getEnabledByAdmin()));
 
+        $this->addFlash('success', 'Vous avez bien activé ou désactivé le dr. ' . $user->getUsername());
 
-//        $form->handleRequest($request);
-//
-//        if ($request->isMethod('POST')){
-//            $em = $this->getDoctrine()->getManager();
-//            $em->persist($user);
-//            $em->flush();
-//
-//            $message = (new \Swift_Message('Vos informations ont été modifiées'))
-//                ->setFrom('digibinks@gmail.com')
-//                ->setTo($user->getEmailCanonical())
-//                ->setBody(
-//                    $this->renderView(
-//                    // templates/emails/registration.html.twig
-//                        'admin/emails/editDoctor.html.twig',
-//                        ['user' => $user]
-//                    ),
-//                    'text/html'
-//                );
-//
-//            $mailer->send($message);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush();
 
-            return $this->redirectToRoute('admin_doctors');
-//        }
+        return $this->redirectToRoute('admin_doctors');
+    }
 
-//        return $this->render('admin/editDoctor.html.twig', [
-//            'form' => $form->createView()
-//        ]);
+    /** @Route("/doctor/{id}/prestations", name="doctor_prestations") */
+    public function doctorPrestationsAction($id){
+        $doctor = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        return $this->render('admin/doctors/prestations.html.twig', [
+            'doctor' => $doctor
+        ]);
+    }
+
+    /** @Route("/doctor/prestation/edit/{idPrestation}", name="doctor_prestation_edit") */
+    public function doctorPrestationEditAction(Request $request, $idPrestation){
+        $prestation = $this->getDoctrine()->getRepository(Prestation::class)->find($idPrestation);
+
+        $form = $this->createForm(PrestationFormType::class, $prestation)
+            ->remove('Ajouter')
+            ->add('Modifier', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($prestation);
+            $em->flush();
+
+            $this->addFlash('success', 'La prestation a bien été modifiée.');
+
+            return $this->redirectToRoute('admin_doctor_prestations', [
+                'id' => $prestation->getDoctor()->getId()
+            ]);
+        }
+
+        return $this->render('admin/doctors/editPrestation.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     /**

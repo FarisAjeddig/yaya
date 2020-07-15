@@ -35,9 +35,15 @@
                                 <td>{{ user.matriculeDoctor }}</td>
                                 <td>
                                     {#                            <a href="{{ url('admin_edit_doctor', {id: user.id}) }}" class="text-info">Modifier</a> | #}
-                                    <a class="text-danger" href="{{ url('admin_delete_user', {id: user.id}) }}">Supprimer</a><br>
-                                    <a class="text-primary" title="ça fonctionne pas encore" href="#">Activer</a>
-                                    <a class="text-info" href="#">Les prestations</a>
+{#                                    <a class="text-danger" href="{{ url('admin_delete_user', {id: user.id}) }}">Supprimer</a><br>#}
+                                    <a class="text-primary" title="ça fonctionne pas encore" href="{{ url('admin_enable_disable_doctor', {id: user.id}) }}">
+                                        {% if user.enabledByAdmin == false %}
+                                            Activer
+                                        {% else %}
+                                            Désactiver
+                                        {% endif %}
+                                    </a><br>
+                                    <a class="text-info" href="{{ url('admin_doctor_prestations', {id: user.id}) }}">Les prestations</a>
                                 </td>
                             </tr>
                         {% endfor %}

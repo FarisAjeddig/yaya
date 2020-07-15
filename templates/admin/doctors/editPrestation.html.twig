@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% embed 'admin/base.html.twig' %}
+        {% block secondTitle %}
+            Admin - Modifier la prestation
+        {% endblock %}
+        {% block bodyAdmin %}<br><br>
+            <div class="container-fluid row text-center">
+                <div class="col-lg-4"></div>
+                <div class="col-lg-4">
+                    {% form_theme form 'bootstrap_4_layout.html.twig' %}
+                    {{ form(form) }}
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

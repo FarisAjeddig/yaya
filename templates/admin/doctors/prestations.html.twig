@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% embed 'admin/base.html.twig' %}
+        {% block secondTitle %}
+            Admin - Les prestations de {{ doctor.username }}
+        {% endblock %}
+        {% block bodyAdmin %}<br><br>
+            <div class="container-fluid row">
+                {% for prestation in doctor.prestations %}
+                    <div class="col-md-5" style="border: solid 0.01em #cdcdcd; padding: 30px; margin: 30px">
+                        <div class="row" style="padding-bottom: 5px; text-align: left;">
+                            <div class="col-lg-3"><b>{{ prestation.price }} €</b></div>
+                            <div class="col-lg-6 text-center">
+                                <b>{{ prestation.name }}</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">{{ prestation.description }}</div>
+                        </div><br>
+                        <p class="text-center">
+                            <a href="{{ url('admin_doctor_prestation_edit', {idPrestation: prestation.id}) }}" class="btn btn-primary">Modifier</a>
+                        </p><br>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
