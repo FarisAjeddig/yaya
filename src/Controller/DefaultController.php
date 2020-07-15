@@ -387,4 +387,24 @@ class DefaultController extends AbstractController
             'user' => $user
         ]);
     }
+
+    /** @Route("/contact", name="contact") */
+    public function contactAction(){
+        return $this->render('default/contact.html.twig');
+    }
+
+    /** @Route("/CGU-CGV-RGPD", name="CGU_CGV_RGPD") */
+    public function CGUCGVRGPDAction(){
+        return $this->render('default/CGU_CGV_RGPD.html.twig');
+    }
+
+    /** @Route("/mentions-legales", name="mentions_legales") */
+    public function mentionsLegalesAction(){
+        return $this->render('default/mentions_legales.html.twig');
+    }
+
+    /** @Route("/qui-sommes-nous", name="qui_sommes_nous") */
+    public function quiSommesNousAction(){
+        return $this->render('default/quiSommesNous.html.twig');
+    }
 }

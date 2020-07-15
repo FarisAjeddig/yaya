@@ -14,6 +14,11 @@ class DonationRequest
     const STATE_VALID = "La demande est validée, plus qu'à trouver un donateur pour offrir un soin.";
     const STATE_END = "Le soin a été offert.";
 
+    public function __construct()
+    {
+        $this->creationDate = new \DateTime();
+    }
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -65,6 +70,11 @@ class DonationRequest
      * @ORM\ManyToOne(targetEntity="App\Entity\Prestation", inversedBy="donationRequests")
      */
     private $prestation;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $creationDate;
 
     public function getId(): ?int
     {
@@ -175,6 +185,18 @@ class DonationRequest
     public function setPrestation(?Prestation $prestation): self
     {
         $this->prestation = $prestation;
+
+        return $this;
+    }
+
+    public function getCreationDate(): ?\DateTimeInterface
+    {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate(?\DateTimeInterface $creationDate): self
+    {
+        $this->creationDate = $creationDate;
 
         return $this;
     }

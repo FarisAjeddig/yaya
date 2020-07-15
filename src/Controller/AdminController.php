@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Appointment;
 use App\Entity\City;
 use App\Entity\Country;
+use App\Entity\DonationRequest;
 use App\Entity\TypeDoctor;
 use App\Entity\User;
 use App\Form\CityType;
@@ -287,4 +288,42 @@ class AdminController extends AbstractController
     // Fin gestion des pays et des villes
 
 
+    // Gestion des demandes de don
+    /** @Route("/demandes-de-don", name="demande_de_don") */
+    public function demandeDeDonAction(){
+        $donationRequests = $this->getDoctrine()->getRepository(DonationRequest::class)->findAll();
+
+        return $this->render('admin/donationRequest/index.html.twig', [
+            'donationRequests' => $donationRequests
+        ]);
+    }
+
+    /** @Route("/demandes-de-don/delete/{id}", name="demande_de_don_delete") */
+    public function DemandeDeDonDeleteAction($id){
+        $donationRequest = $this->getDoctrine()->getRepository(DonationRequest::class)->find($id);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($donationRequest);
+        $em->flush();
+
+        $this->addFlash('success', 'La demande a bien été supprimée.');
+
+        return $this->redirectToRoute('admin_demande_de_don');
+    }
+
+    /** @Route("/demandes-de-don/valid/{id}", name="demande_de_don_valid") */
+    public function demandeDeDonValidAction($id){
+        /** @var DonationRequest $donationRequest */
+        $donationRequest = $this->getDoctrine()->getRepository(DonationRequest::class)->find($id);
+
+        $donationRequest->setState(DonationRequest::STATE_VALID);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($donationRequest);
+        $em->flush();
+
+        $this->addFlash('success', 'La demande a bien été validée.');
+
+        return $this->redirectToRoute('admin_demande_de_don');
+    }
 }

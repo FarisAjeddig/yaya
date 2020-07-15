@@ -11,11 +11,13 @@ use App\Entity\User;
 use App\Form\DonationRequestType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class DonationRequestController extends AbstractController
 {
@@ -154,4 +156,72 @@ class DonationRequestController extends AbstractController
             ]);
         }
     }
+
+    /** @Route("/offrir/soin/{id}", name="offrir_soin") */
+    public function offrirSoinAction(Request $request, $id=0)
+    {
+        if ($id == 0) {
+            $donationRequests = $this->getDoctrine()->getRepository(DonationRequest::class)->findBy(['state' => DonationRequest::STATE_VALID]);
+
+            return $this->render('donation_request/offrir-soin.html.twig', [
+                'donationRequests' => $donationRequests
+            ]);
+        } else {
+            $donationRequest = $this->getDoctrine()->getRepository(DonationRequest::class)->find($id);
+
+            $form = $this->get('form.factory')
+                ->createNamedBuilder('payment-form')
+                ->add('token', HiddenType::class, [
+                    'constraints' => [new NotBlank()],
+                ])
+                ->add('submit', SubmitType::class, ['label' => "Offrir le soin", 'attr' => ['class' => "genric-btn info circle arrow text-center"]])
+                ->getForm();
+
+            if ($request->isMethod('POST')) {
+                $form->handleRequest($request);
+                if ($form->isValid()) {
+                    $token = $form->getData()['token'];
+
+                    $stripe = new \Stripe\StripeClient(
+                        $_ENV['STRIPE_SECRET_KEY']
+                    );
+
+                    $intent = $stripe->paymentIntents->create([
+                        'amount' => $donationRequest->getPrestation()->getPrice() * 100 + 300,
+                        'currency' => 'eur',
+                        'payment_method_types' => ['card'],
+                        'capture_method' => 'manual'
+                    ]);
+
+                    $stripe->paymentIntents->confirm(
+                        $intent['id'],
+                        ['payment_method' => 'pm_card_visa']
+                    );
+
+                    $stripe->paymentIntents->capture($intent['id'], []);
+
+                    $donationRequest->setState(DonationRequest::STATE_END);
+                    $donationRequest->setBuyer($this->getUser());
+//                    $this->sendMail($appointment->getEmailPatient(), "Un rendez-vous chez le médecin " . $appointment->getDoctor()->getUsername() . " vous attend !", "appointment/emails/nouveau-rendez-vous-pour-le-patient.html.twig", $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . ". Vous pouvez vous rendre directement la-bas pour réserver un créneau ou l'appeler pour fixer un rendez-vous au " . $appointment->getDoctor()->getPhoneNumber(), $mailer);
+//                    $this->sendSMS($appointment->getPhoneNumberPatient(), $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . '.');
+
+                    $this->get('session')->getFlashBag()->add('success', 'Le soin a bien été offert.');
+
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($donationRequest);
+                    $em->flush();
+
+
+                    return $this->redirectToRoute('offrir_soin');
+                }
+            }
+
+            return $this->render('donation_request/offrir-soin-payment.html.twig', [
+                'donationRequest' => $donationRequest,
+                'stripe_public_key' => $_ENV['STRIPE_PUBLIC_KEY'],
+                'form' => $form->createView()
+            ]);
+        }
+    }
 }
+

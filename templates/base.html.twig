@@ -57,7 +57,7 @@
                                                     {% endif %}
                                                     <li><a href="{{ url('search_doctor') }}">Trouver un médecin</a></li>
                                                     <li><a href="{{ url('demander_un_don') }}">Demander un don</a></li>
-                                                    <li><a href="{{ url('search_doctor') }}">Offrir un soin</a></li>
+                                                    <li><a href="{{ url('offrir_soin') }}">Offrir un soin</a></li>
 {#                                                    <li><a href="#">blog <i class="ti-angle-down"></i></a>#}
 {#                                                        <ul class="submenu">#}
 {#                                                            <li><a href="#">blog</a></li>#}
@@ -156,10 +156,10 @@
                                         Services
                                     </h3>
                                     <ul>
-                                        <li><a href="#">Accueil</a></li>
-                                        <li><a href="#">Trouver un médecin </a></li>
-                                        <li><a href="#">S'inscrire</a></li>
-                                        <li><a href="#">Se connecter</a></li>
+                                        <li><a href="{{ url('homepage') }}">Accueil</a></li>
+                                        <li><a href="{{ url('search_doctor') }}">Trouver un médecin </a></li>
+                                        <li><a href="{{ url('fos_user_registration_register') }}">S'inscrire</a></li>
+                                        <li><a href="{{ url('fos_user_security_login') }}">Se connecter</a></li>
                                     </ul>
 
                                 </div>
@@ -170,10 +170,10 @@
                                         Liens utiles
                                     </h3>
                                     <ul>
-                                        <li><a href="#">Nous contacter</a></li>
-                                        <li><a href="#">CGU/CGV & RGPD</a></li>
-                                        <li><a href="#">Mentions légales</a></li>
-                                        <li><a href="#">Qui sommes-nous ?</a></li>
+                                        <li><a href="{{ url('contact') }}">Nous contacter</a></li>
+                                        <li><a href="{{ url('CGU_CGV_RGPD') }}">CGU/CGV & RGPD</a></li>
+                                        <li><a href="{{ url('mentions_legales') }}">Mentions légales</a></li>
+                                        <li><a href="{{ url('qui_sommes_nous') }}">Qui sommes-nous ?</a></li>
                                     </ul>
                                 </div>
                             </div>
