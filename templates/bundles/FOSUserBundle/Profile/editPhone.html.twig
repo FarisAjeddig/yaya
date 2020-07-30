@@ -1,6 +1,17 @@
 {% extends "@FOSUser/layout.html.twig" %}
 
 {% block fos_user_content %}
+    <style>
+        input, button {
+            height: 35px;
+            margin: 0;
+            padding: 6px 12px;
+            border-radius: 2px;
+            font-family: inherit;
+            font-size: 100%;
+            color: inherit;
+        }
+    </style>
     <div class="bradcam_area bradcam_bg_3">
         <div class="container">
             <div class="row">
@@ -15,17 +26,54 @@
 
     <div class="container-fluid row p-5">
         <div class="col-lg-4"></div>
-        <div class="col-lg-4">
-            {% form_theme form 'bootstrap_4_layout.html.twig' %}
-            {{ form_start(form) }}
+        <div class="col-lg-4 text-center">
+            <label style="font-size: 18px" for="form_phone_number" class="required">Nouveau numéro de téléphone</label> <br>
+            <input type="tel" id="form_phone_number">
+            <br><br>
 
-            {{ form_errors(form) }}
-
-            {{ form_label(form.phone_number,"",  {label_attr: {style: 'font-size: 18px'} }) }}
-            {{ form_widget(form.phone_number) }}
-            {{ form_errors(form.phone_number) }}<br>
-
-            {{ form_end(form) }}
+            <div class="form-group">
+                <button type="submit" id="form_Envoyer" name="form[Envoyer]" class="form-control btn-success btn-block btn">Envoyer</button>
+            </div>
         </div>
     </div>
+    <script>
+        $("#form_Envoyer").click(function(){
+            var number = iti.getNumber();
+            $.post("{{ url('homepage') }}profile/phone/edit/" + number, function(data){
+                if (data === 'OK'){
+                    // alert(data);
+                    window.location.replace( "{{ url('fos_user_profile_show') }}" );
+                }
+            })
+        })
+    </script>
 {% endblock fos_user_content %}
+{% block javascript2 %}
+    <script>
+        var input = document.querySelector("#form_phone_number");
+        iti = window.intlTelInput(input, {
+            // allowDropdown: false,
+            // autoHideDialCode: false,
+            // autoPlaceholder: "off",
+            // dropdownContainer: document.body,
+            // excludeCountries: ["us"],
+            // formatOnDisplay: false,
+            geoIpLookup: function(callback) {
+                $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+                    var countryCode = (resp && resp.country) ? resp.country : "";
+                    callback(countryCode);
+                });
+            },
+            // hiddenInput: "full_number",
+            // initialCountry: "auto",
+            // localizedCountries: { 'de': 'Deutschland' },
+            // nationalMode: false,
+            // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+            placeholderNumberType: "MOBILE",
+            preferredCountries: ['fr'],
+            separateDialCode: true,
+            utilsScript: "/build/intlinput/js/utils.js",
+        });
+        iti.setNumber("")
+    </script>
+{% endblock %}

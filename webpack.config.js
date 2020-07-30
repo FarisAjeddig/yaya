@@ -68,6 +68,9 @@ Encore
         { from: './assets/js', to: 'js' }
     ]))
     .addPlugin(new CopyWebpackPlugin([
+        { from: './assets/intlinput', to:'intlinput'}
+    ]))
+    .addPlugin(new CopyWebpackPlugin([
         { from: './assets/scss', to: 'scss' }
     ]))
     .addPlugin(new CopyWebpackPlugin([

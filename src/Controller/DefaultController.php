@@ -21,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
@@ -63,7 +64,7 @@ class DefaultController extends AbstractController
     }
 
     /** @Route("/profile/edit/phone", name="profile_edit_phone") */
-    public function profileEditAction(Request $request){
+    public function profileEditPhoneAction(Request $request){
         $user = $this->getUser();
 
         $form = $this->createFormBuilder($user)
@@ -87,6 +88,22 @@ class DefaultController extends AbstractController
         return $this->render('bundles/FOSUserBundle/Profile/editPhone.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    /** @Route("/profile/phone/edit/{phone}", name="profile_phone_edit") */
+    public function profilePhoneEditAction(Request $request, $phone){
+        if ($request->isMethod("post") !== true){
+            dd("Error");
+        } else {
+            /** @var User $user */
+            $user = $this->getUser();
+            $user->setPhoneNumber($phone);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+            $response = new Response('OK', Response::HTTP_OK);
+            return $response;
+        }
     }
 
     /** @Route("/register/doctor", name="register_doctor") */

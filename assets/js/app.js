@@ -18,6 +18,8 @@ import '../css/animate.min.css';
 import '../css/slick.css';
 import '../css/slicknav.css';
 import '../css/style.css';
+import '../intlinput/css/demo.css';
+import '../intlinput/css/intlTelInput.min.css';
 
 import $ from 'jquery';
 window.jQuery = $;
@@ -51,6 +53,7 @@ import './jquery.form.js';
 import './jquery.validate.min.js';
 import './mail-script.js';
 import './main.js';
-
+import '../intlinput/js/intlTelInput.min.js';
+import '../intlinput/js/utils.js';
 
 console.log('Hello Webpack Encore! Edit me in assets/js/app.js');

@@ -61,13 +61,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/reserver-rendez-vous", name="reserver_rendez_vous")
-     */
-    public function reserverRendezVous(){
-        return $this->render('admin/reserver_rendez_vous.html.twig');
-    }
-
-    /**
      * @Route("/enable-disable/doctor/{id}", name="enable_disable_doctor")
      */
     public function enableDisableDoctor($id){
