@@ -171,15 +171,27 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /** @Route("/type/doctor/delete/{id}", name="type_doctor_delete") */
-    public function typeDoctorDelete($id){
+    /** @Route("/type/doctor/edit/{id}", name="type_doctor_edit") */
+    public function typeDoctorDelete(Request $request, $id){
         $type = $this->getDoctrine()->getRepository(TypeDoctor::class)->find($id);
-        $em = $this->getDoctrine()->getManager();
 
-        $em->remove($type);
-        $em->flush();
+        $form = $this->createForm(TypeDoctorType::class, $type)
+            ->remove('Ajouter')
+            ->add('Modifier', SubmitType::class);
 
-        return $this->redirectToRoute('admin_type_doctor');
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid() && $request->isMethod('POST')){
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($type);
+            $em->flush();
+
+            return $this->redirectToRoute('admin_type_doctor');
+        }
+
+        return $this->render('admin/doctorType/create.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     // Fin gestion des types de docteurs
@@ -214,7 +226,7 @@ class AdminController extends AbstractController
             $em->persist($newCountry);
             $em->flush();
 
-            $this->addFlash('success', 'Le pays a bien été créé, cliquez ici pour y ajouter des villes');
+            $this->addFlash('success', 'Le pays a bien été créé, cliquez dessus pour y ajouter des villes');
 
             return $this->redirectToRoute('admin_countrys');
         }
@@ -225,14 +237,34 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/countrys/delete/{id}", name="country_delete")
+     * @Route("/countrys/edit/{id}", name="country_edit")
      */
-    public function countryDelete($id){
+    public function countryDelete(Request $request, $id){
         $country = $this->getDoctrine()->getRepository(Country::class)->find($id);
-        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm(CountryType::class, $country)
+            ->remove('Ajouter')
+            ->add('Modifier', SubmitType::class)
+        ;
 
-        $em->remove($country);
-        $em->flush();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid() && $request->isMethod('POST')){
+
+//            dd($newCountry);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($country);
+            $em->flush();
+
+            $this->addFlash('success', 'Le pays a bien été modifié.');
+
+            return $this->redirectToRoute('admin_countrys');
+        }
+
+        return $this->render('admin/country/create.html.twig', [
+            'form' => $form->createView()
+        ]);
+
 
         return $this->redirectToRoute('admin_countrys');
     }
@@ -279,18 +311,33 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/countrys/deleteCity/{id}", name="country_delete_city")
+     * @Route("/countrys/editCity/{id}", name="country_edit_city")
      */
-    public function countryDeleteCity($id){
+    public function countryEditCity(Request $request, $id){
         $city = $this->getDoctrine()->getRepository(City::class)->find($id);
         $em = $this->getDoctrine()->getManager();
 
-        $idCountry = $city->getCountry()->getId();
+        $form = $this->createForm(CityType::class, $city)
+            ->remove('Ajouter')
+            ->add('Modifier', SubmitType::class);
 
-        $em->remove($city);
-        $em->flush();
+        $form->handleRequest($request);
 
-        return $this->redirectToRoute('admin_country', ['id' => $idCountry]);
+        if ($form->isSubmitted() && $form->isValid() && $request->isMethod('POST')){
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($city);
+            $em->flush();
+
+            $this->addFlash('success', 'La ville a bien été modifiée.');
+
+            return $this->redirectToRoute('admin_country', ['id' => $id]);
+        }
+
+        return $this->render('admin/country/addCityToCountry.html.twig', [
+            'country' => $city->getCountry(),
+            'form' => $form->createView()
+        ]);
     }
 
     // Fin gestion des pays et des villes

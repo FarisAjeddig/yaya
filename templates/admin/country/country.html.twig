@@ -14,6 +14,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Ville</th>
+                            <th scope="col">Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -21,7 +22,7 @@
                             <tr>
                                 <th scope="row">{{ city.id }}</th>
                                 <td>{{ city.name }}</td>
-                                <td><a href="{{ url('admin_country_delete_city', {id: city.id}) }}" class="text-danger"><i class="fas fa-trash-alt" title="Supprimer"></i></a></td>
+                                <td><a href="{{ url('admin_country_edit_city', {id: city.id}) }}" class="text-danger">Modifier</a></td>
                             </tr>
                         {% endfor %}
                         </tbody>

@@ -15,6 +15,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Type</th>
+                            <th scope="col">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -22,7 +23,7 @@
                             <tr>
                                 <th scope="row">{{ type.id }}</th>
                                 <td>{{ type.name }}</td>
-                                <td><a href="{{ url('admin_type_doctor_delete', {id: type.id}) }}" class="text-danger"><i class="fas fa-trash-alt" title="Supprimer"></i></a></td>
+                                <td><a href="{{ url('admin_type_doctor_edit', {id: type.id}) }}" class="text-danger">Modifier</a></td>
                             </tr>
                         {% endfor %}
                         </tbody>
