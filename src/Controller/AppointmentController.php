@@ -86,7 +86,7 @@ class AppointmentController extends AbstractController
             ->add('token', HiddenType::class, [
                 'constraints' => [new NotBlank()],
             ])
-            ->add('submit', SubmitType::class, ['label' => "Pré-autoriser le prélévement", 'attr' => ['class' => "genric-btn info circle arrow text-center"]])
+            ->add('submit', SubmitType::class, ['label' => "Payer", 'attr' => ['class' => "genric-btn info circle arrow text-center"]])
             ->getForm();
 
         if ($request->isMethod('POST')) {
