@@ -205,7 +205,7 @@ class DefaultController extends AbstractController
                 "attr" => [ "rows" => 4]
             ])
             ->add("bankAccountNumber", TextType::class, [
-                'label' => "Votre IBAN Français (Ne sera utilisé que pour vous reverser les paiements de vos consultations)"
+                'label' => "Votre IBAN (Ne sera utilisé que pour vous reverser les paiements de vos consultations)"
             ])
             ->add("matriculeDoctor", TextType::class, [
                 'label' => "Numéro de matricule officiel"

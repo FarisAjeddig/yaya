@@ -5,7 +5,7 @@
             Admin - {{ country.name }} et ses villes
         {% endblock %}
         {% block bodyAdmin %}
-            <div class="container-fluid row p-2" style="background-color: #cddcdf; box-sizing: unset;">
+            <div class="container-fluid row p-2" style="box-sizing: unset;">
                 <div class="col-lg-1"></div>
                 <div class="col-lg-10 text-center"><br><br>
                     <a href="{{ url('admin_country_add_city', {id: country.id }) }}" class="genric-btn primary text-center">Ajouter une ville</a><br><br>

@@ -32,7 +32,8 @@
         "symfony/webpack-encore-bundle": "^1.7",
         "symfony/yaml": "4.4.*",
         "twig/twig": "^2.0",
-        "twilio/sdk": "^6.7"
+        "twilio/sdk": "^6.7",
+        "ext-intl": "*"
     },
     "require-dev": {
         "symfony/debug-pack": "*",
