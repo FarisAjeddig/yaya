@@ -61,6 +61,7 @@ class DonationRequestController extends AbstractController
 
             $newDonationRequest->setPicture($newFilename);
             $newDonationRequest->setState(DonationRequest::STATE_CREATED);
+            $newDonationRequest->setBirthday($form['birthday']->getData());
 
             // TODO : Envoyer un mail avec le lien pour suivre la demande et/ou la compléter.
 
