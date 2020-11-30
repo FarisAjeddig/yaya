@@ -13,6 +13,68 @@
 <script>
     // jQuery = $
 </script>
+
+{% if user.is_doctor %}
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+            let score = 100;
+            let todolist = []
+
+            if ('{{ user.diploma }}' === '') {
+                score -= 45;
+                todolist.push("Veuillez compléter votre profil")
+            }
+            if ('{{ user.prestations | length }}' === '0') {
+                score -= 20;
+                todolist.push("Entrez au moins une prestation")
+            }
+            if ('{{ user.picture }}' === 'doctor-single.jpg') {
+                score -= 10
+                todolist.push("Mettez une photo de profil !")
+            }
+
+            if (score < 33) {
+                color = "color-2"
+            } else if (score < 66) {
+                color = "color-3"
+            } else if (score < 95) {
+                color = "color-7"
+            } else {
+                color = "color-4"
+            }
+
+
+            $("#progressBarProfileDoctor").removeClass()
+                .addClass("progress-bar " + color).css('width', score + "%")
+            $("#scoreProfileDoctor").text(score + " %")
+
+            todolist.map(value => {
+                $("#todolistProfileDoctor").append("<li><b>" + value + "</b></li>")
+            })
+        })
+
+
+    </script>
+    <div class="container-fluid row p-5">
+        <div class="col-md-3"></div>
+        <div class="progress-table col-md-6 p-2">
+            <div class="table-row">
+                <div class="percentage" style="width: 100%">
+                    <div class="progress">
+                        <div class="progress-bar color-2" id="progressBarProfileDoctor" role="progressbar" style="width: 100%"
+                             aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+                <b id="scoreProfileDoctor" style="white-space: nowrap;">30%</b>
+            </div>
+            <ul class="unordered-list" id="todolistProfileDoctor">
+            </ul>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+{% endif %}
 <div class="container-fluid row p-5">
     {% if user.is_doctor %}
         <div class="col-lg-2"></div>

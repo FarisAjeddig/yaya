@@ -2,11 +2,11 @@
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Afromed{% endblock %}</title>
-        <meta name="description" content="Description du site de yaya">
+        <title>{% block title %}Santé Universelle{% endblock %}</title>
+        <meta name="description" content="Prenez soin de vos proche à l'étranger grâce à Santé Universelle. Réservez pour eux des rendez-vous chez le médecin quand ils en ont besoin.">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-{#        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">#}
+        <link rel="shortcut icon" type="image/x-icon" href="{{ '/build/images/logo.png' }}">
         {% block stylesheets %}
 {#            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">#}
             <!-- CSS here -->
@@ -25,6 +25,13 @@
     </head>
     <body>
         {% block header %}
+            {% if app.user and app.user.is_doctor and app.request.headers.get('referer') == url('fos_user_security_login')  %}
+            <script>
+                $(document).ready(function(){
+                    document.location.href = "{{ url('fos_user_profile_show') }}"
+                })
+            </script>
+            {% endif %}
             <header>
                 <div class="header-area ">
                     <div id="sticky-header" class="main-header-area">

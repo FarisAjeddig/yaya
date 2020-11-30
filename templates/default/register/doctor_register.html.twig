@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-xl-12">
                     <div class="bradcam_text">
-                        <h3>Je suis médecin</h3>
+                        <h3>Inscription médecin</h3>
                     </div>
                 </div>
             </div>
@@ -115,8 +115,8 @@
             </div>
             <div class="col-xl-5 offset-1 apply_form_area" style="padding-top: inherit">
                 <form action="{{ path("fos_user_security_check") }}" class="form-group apply_form" method="post">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                     <h3>Déjà un compte ?</h3>
-                    {# TODO : fix ce formulaire (check FOS User Bundle) #}
                     <h4 class="text-center">Connexion</h4>
                     <label for="username" style="font-size: 18px">Adresse mail</label>
                     <input type="text" class="form-control" id="username" name="_username" value="" required="required" autocomplete="username" />
@@ -125,8 +125,6 @@
                     <input type="password" class="form-control" id="password" name="_password" required="required" autocomplete="current-password" />
                     <div class="text-right"><a href="{{ url('fos_user_resetting_request') }}" class="text-danger">Mot de passe oublié</a></div>
                     <br><br>
-                    {#            <input type="checkbox" class="form-control" id="remember_me" name="_remember_me" value="on" />#}
-                    {#            <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>#}
                     <input type="submit" class="form-control genric-btn success btn-block" id="_submit" name="_submit" value="Connexion" />
                 </form>
             </div>

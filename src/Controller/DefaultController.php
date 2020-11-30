@@ -138,6 +138,8 @@ class DefaultController extends AbstractController
             $cryptedPass = base64_encode($digest);
             $doc->setPassword($cryptedPass);
 
+            $this->get('session')->getFlashBag()->add('success', 'Bienvenue sur Santé Universelle ! Vous pouvez dès à présent vous connecter.');
+
             // Envoi d'un mail à l'administrateur
             $message = (new \Swift_Message('Un nouveau docteur s\'est inscrit'))
                 ->setFrom('digibinks@gmail.com')

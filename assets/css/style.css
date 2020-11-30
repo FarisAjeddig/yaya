@@ -4346,7 +4346,7 @@ h6 {
 /* line 387, ../../Arafath/CL/December/234. Finance/HTML/scss/_elements.scss */
 .progress-table .table-row {
   padding: 15px 0;
-  border-top: 1px solid #edf3fd;
+  /*border-top: 1px solid #edf3fd;*/
   display: flex;
 }
 
@@ -4366,7 +4366,7 @@ h6 {
 
 /* line 404, ../../Arafath/CL/December/234. Finance/HTML/scss/_elements.scss */
 .progress-table .table-row .percentage .progress {
-  width: 80%;
+  width: 100%;
   border-radius: 0px;
   background: transparent;
 }
