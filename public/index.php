@@ -20,8 +20,8 @@ if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? $_ENV['TRUSTED_HOSTS'] ?? false
     Request::setTrustedHosts([$trustedHosts]);
 }
 
-//$kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
-$kernel = new Kernel('dev', (bool) true);
+$kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+//$kernel = new Kernel('dev', (bool) true);
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();

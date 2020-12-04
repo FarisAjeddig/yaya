@@ -46,7 +46,6 @@
                     {% if (appointment.state == constant("App\\Entity\\APPOINTMENT::STATUS_PAID")) %}
                     <div class="generic-blockquote">
                         Rendez-vous avec M. {{ appointment.buyer.username }} <br>
-                        {{ dump(appointment.state) }}
                         {{ appointment.prestation.name }}<br>
                         <a class="text-info" href="{{ url('rendez_vous_individuel', {'id': appointment.id}) }}">Voir le détail</a>
                     </div><br>
