@@ -74,6 +74,7 @@
         <div class="col-md-4 text-center"><br>
             <h2>Offrir le soin</h2>
             <h3>{{ donationRequest.prestation.price + 3 }} €</h3>
+            {% if (donationRequest.state == constant("App\\Entity\\DonationRequest::STATE_VALID")) %}
             {{ form_start(form, {attr: {id: form.vars.id}}) }}
             <div class="form-group">
                 <label for="card-element">
@@ -106,6 +107,9 @@
             </div>
             {{ form_widget(form.token) }}
             {{ form_end(form) }}
+            {% else %}
+            <div>Le soin a déjà été offert</div>
+            {% endif %}
         </div>
     </div>
 

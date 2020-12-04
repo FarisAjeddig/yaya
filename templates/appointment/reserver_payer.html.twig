@@ -33,9 +33,9 @@
 
         </div>
         <div class="col-md-2"></div>
-
         <div class="col-md-4 text-center"><br><br>
             <h3>{{ prestation.price + 3 }} €</h3>
+            {% if (appointment.state == constant("App\\Entity\\APPOINTMENT::STATUS_UNPAID")) %}
             {{ form_start(form, {attr: {id: form.vars.id}}) }}
             <div class="form-group">
                 <label for="card-element">
@@ -68,6 +68,9 @@
             </div>
             {{ form_widget(form.token) }}
             {{ form_end(form) }}
+            {% else %}
+                <div>Le rendez-vous a déjà été payé.</div>
+            {% endif %}
         </div>
     </div>
 

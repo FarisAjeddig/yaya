@@ -254,9 +254,9 @@
     <script>
         // Using this tutorial for autocomplete address : https://www.youtube.com/watch?v=Rpzp0yCAmq4
         function activatePlacesSearch(){
-            var options = { componentRestrictions: { country: "fr"} };
+            // var options = { componentRestrictions: { country: "fr"} };
             var input = document.getElementById("form_address");
-            var autocomplete = new google.maps.places.Autocomplete(input, options);
+            var autocomplete = new google.maps.places.Autocomplete(input);
         }
     </script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuZviasKN0VON99Nz4I8b_tu6YZDcmrsw&libraries=places&callback=activatePlacesSearch&libraries=places"></script>

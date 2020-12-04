@@ -369,7 +369,7 @@ class DefaultController extends AbstractController
 
         $datad = ['file' => null];
         $form = $this->createFormBuilder($datad)
-            ->add('file', FileType::class, ['label' => "Choisissez une image", 'attr' => ['class' => 'form-control text-center']])
+            ->add('file', FileType::class, ['label' => "Choisissez une image", 'attr' => ['class' => 'form-control text-center', 'accept' => 'image/*']])
             ->add('Modifier', SubmitType::class)
             ->getForm();
 

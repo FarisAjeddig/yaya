@@ -34,7 +34,7 @@ class DonationRequestController extends AbstractController
                 'widget' => 'single_text'
             ])
             ->add('phoneNumber', TextType::class)
-            ->add('pictureFile', FileType::class, ['mapped' => false])
+            ->add('pictureFile', FileType::class, ['mapped' => false, 'attr' => ['accept' => 'image/*']])
             ->add("Envoyer", SubmitType::class)
             ->getForm()
         ;
@@ -139,6 +139,7 @@ class DonationRequestController extends AbstractController
 
         $this->get('session')->getFlashBag()->add('success', 'Le choix de la consultation a bien été enregistré.');
 
+        // TODO : On pourrait envoyer un SMS au iencli
         return $this->redirectToRoute('demander_un_don_recapitulatif', [
             'idDonationRequest' => $idDonationRequest
         ]);
@@ -150,7 +151,9 @@ class DonationRequestController extends AbstractController
         $donationRequest = $this->getDoctrine()->getRepository(DonationRequest::class)->find($idDonationRequest);
 
         if ($donationRequest->getState() == DonationRequest::STATE_CREATED){
-            return $this->redirectToRoute('demander_don_choisir_medecin', ['idDonationRequest' => $idDonationRequest]);
+            return $this->redirectToRoute('demander_don_choisir_medecin', [
+                'idDonationRequest' => $idDonationRequest
+            ]);
         } else {
             return $this->render('donation_request/recapitulatif.html.twig', [
                 'donationRequest' => $donationRequest
@@ -169,6 +172,9 @@ class DonationRequestController extends AbstractController
             ]);
         } else {
             $donationRequest = $this->getDoctrine()->getRepository(DonationRequest::class)->find($id);
+//            if ($donationRequest->getState() === DonationRequest::STATE_END){
+//
+//            }
 
             $form = $this->get('form.factory')
                 ->createNamedBuilder('payment-form')
@@ -187,6 +193,7 @@ class DonationRequestController extends AbstractController
                         $_ENV['STRIPE_SECRET_KEY']
                     );
 
+
                     $intent = $stripe->paymentIntents->create([
                         'amount' => $donationRequest->getPrestation()->getPrice() * 100 + 300,
                         'currency' => 'eur',
@@ -203,6 +210,7 @@ class DonationRequestController extends AbstractController
 
                     $donationRequest->setState(DonationRequest::STATE_END);
                     $donationRequest->setBuyer($this->getUser());
+                    // TODO : On pourrait envoyer un SMS / email au iencli
 //                    $this->sendMail($appointment->getEmailPatient(), "Un rendez-vous chez le médecin " . $appointment->getDoctor()->getUsername() . " vous attend !", "appointment/emails/nouveau-rendez-vous-pour-le-patient.html.twig", $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . ". Vous pouvez vous rendre directement la-bas pour réserver un créneau ou l'appeler pour fixer un rendez-vous au " . $appointment->getDoctor()->getPhoneNumber(), $mailer);
 //                    $this->sendSMS($appointment->getPhoneNumberPatient(), $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . '.');
 

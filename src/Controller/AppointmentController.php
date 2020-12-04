@@ -111,13 +111,13 @@ class AppointmentController extends AbstractController
 
                 $this->sendMail($appointment->getEmailPatient(), "Un rendez-vous chez le médecin " . $appointment->getDoctor()->getUsername() . " vous attend !", "appointment/emails/nouveau-rendez-vous-pour-le-patient.html.twig", $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . ". Vous pouvez vous rendre directement la-bas pour réserver un créneau ou l'appeler pour fixer un rendez-vous au " . $appointment->getDoctor()->getPhoneNumber(), $mailer);
                 $this->sendSMS($appointment->getPhoneNumberPatient(), $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . '.');
+                // TODO : Envoyer un e-mail/sms au docteur également.
 
                 $this->get('session')->getFlashBag()->add('success', 'Le rendez-vous a bien été payé. Le patient a reçu un SMS et un email lui indiquant la marche à suivre.');
 
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($appointment);
                 $em->flush();
-
 
                 return $this->redirectToRoute('mes_rendez_vous');
             }
