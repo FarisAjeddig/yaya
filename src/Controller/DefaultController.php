@@ -23,9 +23,19 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use  \Mailjet\Resources;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class DefaultController extends AbstractController
 {
+    private $mj;
+
+    public function __construct(){
+        $this->mj = new \Mailjet\Client($_ENV['MJ_APIKEY_PUBLIC'],$_ENV['MJ_APIKEY_PRIVATE'],true,['version' => 'v3.1']);
+    }
+
     /** @Route("/", name="homepage") */
     public function indexAction()
     {
@@ -107,7 +117,7 @@ class DefaultController extends AbstractController
     }
 
     /** @Route("/register/doctor", name="register_doctor") */
-    public function registerDoctorAction(Request $request, \Swift_Mailer $mailer){
+    public function registerDoctorAction(Request $request){
         $doc = new User();
         $form = $this->createForm(DoctorType::class, $doc);
 
@@ -152,7 +162,42 @@ class DefaultController extends AbstractController
                     'text/html'
                 );
 
-            $mailer->send($message);
+
+            $body = [
+                'Messages' => [
+                    [
+                        'From' => [
+                            'Email' => "contact@sante-universelle.org",
+                            'Name' => "Santé universelle"
+                        ],
+                        'To' => [
+                            [
+                                'Email' => $_ENV['EMAIL_ADMIN'],
+                                'Name' => $_ENV['NAME_ADMIN']
+                            ]
+                        ],
+                        'TemplateID' => 2042089,
+                        'TemplateLanguage' => true,
+                        'Variables' => ['link' => $this->generateUrl('admin_doctors', [], UrlGeneratorInterface::ABSOLUTE_URL)]
+                    ],
+                    [
+                        'To' => [[
+                            'Email' => $doc->getEmailCanonical(),
+                            'Name' => $doc->getUsername()
+                        ]],
+                        'TemplateID' => 2042116,
+                        'TemplateLanguage' => true,
+                        'Variables' => [
+                            'link' => $this->generateUrl('fos_user_profile_show'),
+                            'doc' => $doc
+
+                        ]
+                    ]
+                ]
+            ];
+            $response = $this->mj->post(Resources::$Email, ['body' => $body]);
+
+            $this->get('session')->getFlashBag()->add('success', 'Bienvenue sur ');
 
             // Persister l'utilisateur dans la base de données
             $em = $this->getDoctrine()->getManager();
@@ -160,7 +205,11 @@ class DefaultController extends AbstractController
             $em->flush();
 
             //TODO : Renvoyer vers la page de connexion instead ou gérer automatiquement la connexion.
-            return $this->redirectToRoute('fos_user_security_login');
+
+            $token = new UsernamePasswordToken($doc, null, 'main', $doc->getRoles());
+            $this->get('security.token_storage')->setToken($token);
+            $this->get('session')->set('_security_main', serialize($token));
+            return $this->redirectToRoute('fos_user_profile_show');
         }
 
         return $this->render('default/register/doctor_register.html.twig', [

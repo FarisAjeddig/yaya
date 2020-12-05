@@ -5,7 +5,10 @@
         "php": "^7.1.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-intl": "*",
+        "ext-json": "*",
         "friendsofsymfony/user-bundle": "~2.0",
+        "mailjet/mailjet-apiv3-php": "^1.5",
         "misd/phone-number-bundle": "^1.3",
         "sensio/framework-extra-bundle": "^5.1",
         "stripe/stripe-php": "^7.37",
@@ -32,9 +35,7 @@
         "symfony/webpack-encore-bundle": "^1.7",
         "symfony/yaml": "4.4.*",
         "twig/twig": "^2.0",
-        "twilio/sdk": "^6.7",
-        "ext-intl": "*",
-      "ext-json": "*"
+        "twilio/sdk": "^6.7"
     },
     "require-dev": {
         "symfony/debug-pack": "*",
