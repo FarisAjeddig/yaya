@@ -6,6 +6,7 @@ use App\Entity\Appointment;
 use App\Entity\Prestation;
 use App\Entity\User;
 use App\Form\AppointmentType;
+use Mailjet\Resources;
 use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -21,6 +22,12 @@ use Twilio\Rest\Client;
 
 class AppointmentController extends AbstractController
 {
+    private $mj;
+
+    public function __construct(){
+        $this->mj = new \Mailjet\Client($_ENV['MJ_APIKEY_PUBLIC'],$_ENV['MJ_APIKEY_PRIVATE'],true,['version' => 'v3.1']);
+    }
+
     /**
      * @Route("/reserver/{idDoctor}/{idPrestation}", name="reserver_rendez_vous")
      */
@@ -29,6 +36,12 @@ class AppointmentController extends AbstractController
         $repositoryUser = $this->getDoctrine()->getRepository(User::class);
         /** @var User $doctor */
         $doctor = $repositoryUser->find($idDoctor);
+
+        if (!$doctor->getEnabledByAdmin()){
+            $this->get('session')->getFlashBag()->add('danger', 'Ce médecin n\'est pas visible pour le moment.');
+            return $this->redirectToRoute('search_doctor');
+        }
+
         /** @var Prestation $prestation */
         $prestation = $this->getDoctrine()->getRepository(Prestation::class)->find($idPrestation);
 
@@ -74,7 +87,7 @@ class AppointmentController extends AbstractController
     /**
      * @Route("/payer/{idAppointment}", name="reserver_payer")
      */
-    public function reserverPayerAction(Request $request, $idAppointment, \Swift_Mailer $mailer)
+    public function reserverPayerAction(Request $request, $idAppointment)
     {
         /** @var Appointment $appointment */
         $appointment = $this->getDoctrine()->getRepository(Appointment::class)->find($idAppointment);
@@ -93,28 +106,58 @@ class AppointmentController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $token = $form->getData()['token'];
 
+                $token = $form->getData()['token'];
                 $stripe = new \Stripe\StripeClient(
                     $_ENV['STRIPE_SECRET_KEY']
                 );
-
                 $intent = $stripe->paymentIntents->create([
                     'amount' => $appointment->getPrestation()->getPrice() * 100 + 300,
                     'currency' => 'eur',
                     'payment_method_types' => ['card'],
                     'capture_method' => 'manual'
                 ]);
-
                 $appointment->setPaymentIntentId($intent['id']);
                 $appointment->setState(Appointment::STATUS_PAID);
 
-                $this->sendMail($appointment->getEmailPatient(), "Un rendez-vous chez le médecin " . $appointment->getDoctor()->getUsername() . " vous attend !", "appointment/emails/nouveau-rendez-vous-pour-le-patient.html.twig", $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . ". Vous pouvez vous rendre directement la-bas pour réserver un créneau ou l'appeler pour fixer un rendez-vous au " . $appointment->getDoctor()->getPhoneNumber(), $mailer);
-                $this->sendSMS($appointment->getPhoneNumberPatient(), $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . '.');
-                // TODO : Envoyer un e-mail/sms au docteur également.
+                $body = [
+                    'Messages' => [ // Email pour le patient
+                        ['From' => [ 'Email' => "contact@sante-universelle.org", 'Name' => "Santé universelle" ],
+                            'To' => [['Email' => $appointment->getEmailPatient(), 'Name' => $appointment->getNamePatient()]],
+                            'TemplateID' => 2042511,
+                            'TemplateLanguage' => true,
+                            'Variables' => [
+                                'appointment' => $appointment,
+                                'buyerUsername' => $this->getUser()->getUsername(),
+                                'doctorUsername' => $appointment->getDoctor()->getUsername(),
+                                'doctorEmail' => $appointment->getDoctor()->getEmailCanonical(),
+                                'doctorPhoneNumber' => $appointment->getDoctor()->getPhoneNumber()
+                            ]
+                        ], // Email pour le médecin
+                        ['From' => [ 'Email' => "contact@sante-universelle.org", 'Name' => "Santé universelle" ],
+                            'To' => [['Email' => $appointment->getDoctor()->getEmailCanonical(), 'Name' => $appointment->getDoctor()->getUsername()]],
+                            'TemplateID' => 2042515,
+                            'TemplateLanguage' => true,
+                            'Variables' => [
+                                'phoneNumberPatient' => $appointment->getPhoneNumberPatient(),
+                                'namePatient' => $appointment->getNamePatient(),
+                                'emailPatient' => $appointment->getEmailPatient(),
+                                'buyerUsername' => $this->getUser()->getUsername()
+                            ]
+                        ]
+                    ]
+                ];
+                $response = $this->mj->post(Resources::$Email, ['body' => $body]);
+
+                $this->sendSMS($appointment->getPhoneNumberPatient(),
+                    "Santé universelle : " . $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le médecin ' . $appointment->getDoctor()->getUsername() .
+                    ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . '. Coordonnées du médecin : ' . $appointment->getDoctor()->getEmailCanonical() . " " . $appointment->getDoctor()->getPhoneNumber()
+            );
+                $this->sendSMS($appointment->getDoctor()->getPhoneNumber(),
+                    "Santé universelle : Nouvelle réservation pour \"" . $appointment->getPrestation()->getName() .
+                    "\". Coordonnées du patient : " . $appointment->getEmailPatient() . ' ' . $appointment->getPhoneNumberPatient());
 
                 $this->get('session')->getFlashBag()->add('success', 'Le rendez-vous a bien été payé. Le patient a reçu un SMS et un email lui indiquant la marche à suivre.');
-
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($appointment);
                 $em->flush();
@@ -203,21 +246,5 @@ class AppointmentController extends AbstractController
             ->create($to, // to
                 ["body" => $message, "from" => $twilio_number]
             );
-    }
-
-    public function sendMail($to, $subject, $file, $text, $mailer){
-        // Envoi d'un mail à l'administrateur
-        $message = (new \Swift_Message($subject))
-            ->setFrom('digibinks@gmail.com')
-            ->setTo($to)
-            ->setBody(
-                $this->renderView(
-                    $file,
-                    ['text' => $text]
-                ),
-                'text/html'
-            );
-
-        $mailer->send($message);
     }
 }

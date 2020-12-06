@@ -9,6 +9,7 @@ use App\Entity\Prestation;
 use App\Entity\TypeDoctor;
 use App\Entity\User;
 use App\Form\DonationRequestType;
+use Mailjet\Resources;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -17,10 +18,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Twilio\Rest\Client;
 
 class DonationRequestController extends AbstractController
 {
+    private $mj;
+
+    public function __construct(){
+        $this->mj = new \Mailjet\Client($_ENV['MJ_APIKEY_PUBLIC'],$_ENV['MJ_APIKEY_PRIVATE'],true,['version' => 'v3.1']);
+    }
+
     /**
      * @Route("/demander-un-don", name="demander_un_don")
      */
@@ -62,8 +71,6 @@ class DonationRequestController extends AbstractController
             $newDonationRequest->setPicture($newFilename);
             $newDonationRequest->setState(DonationRequest::STATE_CREATED);
             $newDonationRequest->setBirthday($form['birthday']->getData());
-
-            // TODO : Envoyer un mail avec le lien pour suivre la demande et/ou la compléter.
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($newDonationRequest);
@@ -131,7 +138,18 @@ class DonationRequestController extends AbstractController
         $donationRequest->setDoctor($doctor);
         $donationRequest->setState(DonationRequest::STATE_COMPLETE);
 
-        // TODO : Envoyer un mail / sms à l'administrateur pour lui dire de valider ça.
+        // Envoi d'un mail à l'administrateur
+        $body = [
+            'Messages' => [
+                [ 'From' => [ 'Email' => "contact@sante-universelle.org", 'Name' => "Santé universelle" ],
+                    'To' => [[ 'Email' => $_ENV['EMAIL_ADMIN'], 'Name' => $_ENV['NAME_ADMIN']]],
+                    'TemplateID' => 2042788,
+                    'TemplateLanguage' => true,
+                    'Variables' => ['link' => $this->generateUrl('admin_demande_de_don', [], UrlGeneratorInterface::ABSOLUTE_URL)]
+                ]
+            ]
+        ];
+        $response = $this->mj->post(Resources::$Email, ['body' => $body]);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($donationRequest);
@@ -139,7 +157,6 @@ class DonationRequestController extends AbstractController
 
         $this->get('session')->getFlashBag()->add('success', 'Le choix de la consultation a bien été enregistré.');
 
-        // TODO : On pourrait envoyer un SMS au iencli
         return $this->redirectToRoute('demander_un_don_recapitulatif', [
             'idDonationRequest' => $idDonationRequest
         ]);
@@ -171,6 +188,7 @@ class DonationRequestController extends AbstractController
                 'donationRequests' => $donationRequests
             ]);
         } else {
+            /** @var DonationRequest $donationRequest */
             $donationRequest = $this->getDoctrine()->getRepository(DonationRequest::class)->find($id);
 //            if ($donationRequest->getState() === DonationRequest::STATE_END){
 //
@@ -210,9 +228,31 @@ class DonationRequestController extends AbstractController
 
                     $donationRequest->setState(DonationRequest::STATE_END);
                     $donationRequest->setBuyer($this->getUser());
-                    // TODO : On pourrait envoyer un SMS / email au iencli
-//                    $this->sendMail($appointment->getEmailPatient(), "Un rendez-vous chez le médecin " . $appointment->getDoctor()->getUsername() . " vous attend !", "appointment/emails/nouveau-rendez-vous-pour-le-patient.html.twig", $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . ". Vous pouvez vous rendre directement la-bas pour réserver un créneau ou l'appeler pour fixer un rendez-vous au " . $appointment->getDoctor()->getPhoneNumber(), $mailer);
-//                    $this->sendSMS($appointment->getPhoneNumberPatient(), $appointment->getBuyer()->getUsername() . ' vous offre un rendez-vous chez le docteur ' . $appointment->getDoctor()->getUsername() . ' situé à cette adresse : ' . $appointment->getDoctor()->getAdress() . '.');
+                    $body = [
+                        'Messages' => [// Email pour le médecin
+                            ['From' => [ 'Email' => "contact@sante-universelle.org", 'Name' => "Santé universelle" ],
+                                'To' => [['Email' => $donationRequest->getDoctor()->getEmailCanonical(), 'Name' => $donationRequest->getDoctor()->getUsername()]],
+                                'TemplateID' => 2042515,
+                                'TemplateLanguage' => true,
+                                'Variables' => [
+                                    'phoneNumberPatient' => $donationRequest->getPhoneNumber(),
+                                    'namePatient' => $donationRequest->getName(),
+                                    'emailPatient' => $donationRequest->getAddress(),
+                                    'buyerUsername' => $this->getUser()->getUsername()
+                                ]
+                            ]
+                        ]
+                    ];
+                    $response = $this->mj->post(Resources::$Email, ['body' => $body]);
+
+                    $this->sendSMS($donationRequest->getPhoneNumber(),
+                        "Santé universelle : " . $this->getUser()->getUsername() . ' vous offre un rendez-vous chez le médecin ' . $donationRequest->getDoctor()->getUsername() .
+                        ' situé à cette adresse : ' . $donationRequest->getDoctor()->getAdress() . '. Coordonnées du médecin : ' . $donationRequest->getDoctor()->getEmailCanonical() . " " . $donationRequest->getDoctor()->getPhoneNumber()
+                    );
+                    $this->sendSMS($donationRequest->getDoctor()->getPhoneNumber(),
+                        "Santé universelle : Nouvelle réservation pour \"" . $donationRequest->getPrestation()->getName() .
+                        "\". Coordonnées du patient : " . $donationRequest->getPhoneNumber());
+
 
                     $this->get('session')->getFlashBag()->add('success', 'Le soin a bien été offert.');
 
@@ -231,6 +271,19 @@ class DonationRequestController extends AbstractController
                 'form' => $form->createView()
             ]);
         }
+    }
+
+    public function sendSMS($to, $message){
+        $account_sid = $_ENV["TWILIO_SID"];
+        $auth_token = $_ENV["TWILIO_TOKEN"];
+
+        $twilio_number = $_ENV["TWILIO_NUMBER"];
+
+        $twilio = new Client($account_sid, $auth_token);
+        $message = $twilio->messages
+            ->create($to, // to
+                ["body" => $message, "from" => $twilio_number]
+            );
     }
 }
 

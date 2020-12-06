@@ -148,21 +148,7 @@ class DefaultController extends AbstractController
             $cryptedPass = base64_encode($digest);
             $doc->setPassword($cryptedPass);
 
-            $this->get('session')->getFlashBag()->add('success', 'Bienvenue sur Santé Universelle ! Vous pouvez dès à présent vous connecter.');
-
-            // Envoi d'un mail à l'administrateur
-            $message = (new \Swift_Message('Un nouveau docteur s\'est inscrit'))
-                ->setFrom('digibinks@gmail.com')
-                ->setTo('fajeddig@hotmail.fr')
-                ->setBody(
-                    $this->renderView(
-                        'admin/emails/newUserEmailToAdmin.html.twig',
-                        ['doc' => $doc]
-                    ),
-                    'text/html'
-                );
-
-
+            // Envoi d'un mail à l'administrateur et au nouveau médecin
             $body = [
                 'Messages' => [
                     [
@@ -197,14 +183,12 @@ class DefaultController extends AbstractController
             ];
             $response = $this->mj->post(Resources::$Email, ['body' => $body]);
 
-            $this->get('session')->getFlashBag()->add('success', 'Bienvenue sur ');
+            $this->get('session')->getFlashBag()->add('success', 'Bienvenue sur Santé universelle ! Complétez votre profil pour pouvoir être visible sur la plateforme');
 
             // Persister l'utilisateur dans la base de données
             $em = $this->getDoctrine()->getManager();
             $em->persist($doc);
             $em->flush();
-
-            //TODO : Renvoyer vers la page de connexion instead ou gérer automatiquement la connexion.
 
             $token = new UsernamePasswordToken($doc, null, 'main', $doc->getRoles());
             $this->get('security.token_storage')->setToken($token);
@@ -404,7 +388,6 @@ class DefaultController extends AbstractController
 
             return $this->redirectToRoute('fos_user_profile_show');
         } else {
-            // TODO
             dd("Vous n'avez pas le droit d'être là");
         }
     }
@@ -458,7 +441,7 @@ class DefaultController extends AbstractController
     }
 
     /** @Route("/contact", name="contact") */
-    public function contactAction(Request $request, \Swift_Mailer $mailer){
+    public function contactAction(Request $request){
 
         $defaultData = [
             'name' => '',
@@ -487,24 +470,34 @@ class DefaultController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // data is an array with "name", "email", and "message" keys
             $data = $form->getData();
 
             // Envoi d'un mail à l'administrateur
-            $message = (new \Swift_Message('Un nouveau message a été envoyé sur Afromed.'))
-                ->setFrom('digibinks@gmail.com')
-                ->setTo('fajeddig@hotmail.fr')
-                ->setBody(
-                    $this->renderView(
-                        'admin/emails/contact.html.twig',
-                        ['data' => $data]
-                    ),
-                    'text/html'
-                );
-
-            $mailer->send($message);
-
-            $this->get('session')->getFlashBag()->add('success', 'Le message a bien été envoyé ! On vous recontacte rapidement.');
+            $body = [
+                'Messages' => [
+                    [
+                        'From' => [
+                            'Email' => "contact@sante-universelle.org",
+                            'Name' => "Santé universelle"
+                        ],
+                        'To' => [
+                            [
+                                'Email' => $_ENV['EMAIL_ADMIN'],
+                                'Name' => $_ENV['NAME_ADMIN']
+                            ]
+                        ],
+                        'TemplateID' => 2042498,
+                        'TemplateLanguage' => true,
+                        'Variables' => ['message' => $data]
+                    ]
+                ]
+            ];
+            $response = $this->mj->post(Resources::$Email, ['body' => $body]);
+            if ($response->success()){
+                $this->get('session')->getFlashBag()->add('success', 'Le message a bien été envoyé ! On vous recontacte rapidement.');
+            } else {
+                $this->get('session')->getFlashBag()->add('danger', 'Il semble y avoir eu une erreur ... Veuillez réessayez plus tard s\'il vous plaît.');
+            }
 
             return $this->render('default/footerLink/contact.html.twig', [
                 'form' => $form->createView()

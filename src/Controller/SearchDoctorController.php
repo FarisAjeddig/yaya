@@ -34,7 +34,7 @@ class SearchDoctorController extends AbstractController
         foreach ($doctors as $doc){
             $sameType = false;
             foreach ($doc->getTypeDoctor() as $type){
-                if ($type->getId() == $idTypeDoctor){
+                if ($type->getId() == $idTypeDoctor && $doc->getEnabledByAdmin()){
                     $sameType = true;
                 }
             }
@@ -60,11 +60,14 @@ class SearchDoctorController extends AbstractController
     public function doctorProfileAction($id){
         /** @var User $doctor */
         $doctor = $this->getDoctrine()->getRepository(User::class)->find($id);
-        if ($doctor->getIsDoctor()){
+//        dd($this->getUser());
+
+        if ($doctor->getIsDoctor() && ($doctor->getEnabledByAdmin() || ($this->getUser() && in_array('ROLE_ADMIN',$this->getUser()->getRoles())))){
             return $this->render('search_doctor/profile_doctor.html.twig', [
                 'doctor' => $doctor
             ]);
         } else {
+            $this->get('session')->getFlashBag()->add('danger', 'Ce docteur n\'est pas visible pour le moment');
             return $this->redirectToRoute('homepage');
         }
     }
