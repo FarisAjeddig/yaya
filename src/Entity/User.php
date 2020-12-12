@@ -82,11 +82,6 @@ class User extends BaseUser
     private $appointmentAsBuyer;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Appointment", mappedBy="patient")
-     */
-    private $appointmentAsPatient;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Appointment", mappedBy="doctor")
      */
     private $appointmentAsDoctor;
