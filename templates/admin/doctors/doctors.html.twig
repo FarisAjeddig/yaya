@@ -44,7 +44,8 @@
                                         {% endif %}
                                     </a><br>
                                     <a class="text-info" href="{{ url('admin_doctor_prestations', {id: user.id}) }}">Les prestations</a><br>
-                                    <a class="text-white" href="{{ url('doctor_profile', {id: user.id}) }}">Voir le profil</a>
+                                    <a class="text-white" href="{{ url('doctor_profile', {id: user.id}) }}">Voir le profil</a><br>
+                                    <a class="text-success" href="{{ url('admin_doctor_edit', {id: user.id}) }}">Modifier le docteur</a>
                                 </td>
                             </tr>
                         {% endfor %}

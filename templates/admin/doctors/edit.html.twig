@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% embed 'admin/base.html.twig' %}
+        {% block secondTitle %}
+            Admin - Modifier le docteur {{ doctor.username }}
+        {% endblock %}
+        {% block bodyAdmin %}<br><br>
+
+
+            <div class="container-fluid row">
+                <div class="col-lg-4"></div>
+                <div class="col-lg-4">
+                    {% form_theme form 'bootstrap_3_layout.html.twig' %}
+                    {{ form(form) }}
+                </div>
+            </div>
+
+
+            <script>
+                // Using this tutorial for autocomplete address : https://www.youtube.com/watch?v=Rpzp0yCAmq4
+                function activatePlacesSearch(){
+                    // var options = { componentRestrictions: { country: "fr"} };
+                    var input = document.getElementById("doctor_editted_by_admin_adress");
+                    var autocomplete = new google.maps.places.Autocomplete(input);
+                }
+            </script>
+            <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuZviasKN0VON99Nz4I8b_tu6YZDcmrsw&libraries=places&callback=activatePlacesSearch&libraries=places"></script>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.5.3/js/bootstrapValidator.js"></script>
+            <script>
+                $(document).ready(function() {
+                    $('.js-example-basic-multiple').select2({
+                        placeholder: "Choisir"
+                    });
+                });
+            </script>       {% endblock %}
+    {% endembed %}
+{% endblock %}

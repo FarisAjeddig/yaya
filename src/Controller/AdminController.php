@@ -11,10 +11,12 @@ use App\Entity\TypeDoctor;
 use App\Entity\User;
 use App\Form\CityType;
 use App\Form\CountryType;
+use App\Form\DoctorEdittedByAdminType;
 use App\Form\DoctorType;
 use App\Form\PrestationFormType;
 use App\Form\TypeDoctorType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -49,6 +51,82 @@ class AdminController extends AbstractController
         $docs = $this->getDoctrine()->getRepository(User::class)->findBy(['is_doctor' => true]);
         return $this->render('admin/doctors/doctors.html.twig',[
             'docs' => $docs
+        ]);
+    }
+
+    /**
+     * @Route("/edit/doctor/{id}", name="doctor_edit")
+     */
+    public function doctorEdit(Request $request, $id){
+        $doc = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        $typesDoctor = $this->getDoctrine()->getRepository(TypeDoctor::class)->findAll();
+
+        $types = [];
+        foreach ($typesDoctor as $type){
+            $types[$type->getName()] = $type->getId();
+        }
+
+        $dataTypes = [];
+        foreach ($doc->getTypeDoctor() as $type){
+            $dataTypes[$type->getName()] = $type->getId();
+        }
+
+        $citysList = $this->getDoctrine()->getRepository(City::class)->findAll();
+
+        $citys = [];
+        foreach ($citysList as $city){
+            $citys[$city->getName()] = $city->getId();
+        }
+
+        $form = $this->createForm(DoctorEdittedByAdminType::class, $doc)
+            ->add("types", ChoiceType::class, [
+                'choices' => $types,
+                'placeholder' => "Type de médecin",
+                'multiple' => true,
+                'label' => 'Type de médecin',
+                'attr' => ['class' => 'js-example-basic-multiple'],
+                'mapped' => false,
+                'data' => $dataTypes
+            ])
+            ->add("city", ChoiceType::class, [
+                'label' => "Ville",
+                'choices' => $citys,
+                'attr' => ['class' => 'js-example-basic-multiple'],
+                'mapped' => false,
+                'data' => $doc->getCity() !== null ? $doc->getCity()->getName() : null
+            ])
+            ->add('Modifier', SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted()
+//            && $form->isValid()
+        ){
+            $city = $this->getDoctrine()->getRepository(City::class)->find($form->get('city')->getData());
+            $doc->setCity($city);
+            $repoTypesDoctors = $this->getDoctrine()->getRepository(TypeDoctor::class);
+            $doc->clearTypeDoctor();
+            foreach($form->get('types')->getData() as $typeChoosed){
+                $doc->addTypeDoctor($repoTypesDoctors->find($typeChoosed));
+            }
+            $url = 'https://maps.googleapis.com/maps/api/geocode/json?';
+            $options = array("address"=>$doc->getAdress(),"key"=>"AIzaSyAuZviasKN0VON99Nz4I8b_tu6YZDcmrsw");
+            $url .= http_build_query($options,'','&');
+            $coord = json_decode((file_get_contents(htmlspecialchars_decode($url))))->results[0]->geometry->location;
+
+            $doc->setLongAdress($coord->lng);
+            $doc->setLatAdress($coord->lat);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($doc);
+            $em->flush();
+
+            $this->addFlash('success', 'Le compte du médecin a bien été modifiée.');
+        }
+
+        return $this->render('admin/doctors/edit.html.twig', [
+            'form' => $form->createView(),
+            'doctor' => $doc
         ]);
     }
 
