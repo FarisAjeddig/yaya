@@ -25,7 +25,8 @@
                                 <td>{{ user.username }}</td>
                                 <td><a style="color: white" href="mailto:{{ user.email }}">{{ user.email }}</a></td>
                                 <td><a style="color: white" href="telto:{{ user.phone_number }}">{{ user.phone_number }}</a></td>
-                                <td><a class="text-danger" href="{{ url('admin_delete_user', {id: user.id}) }}">Supprimer</a></td>
+                                <td><a class="text-danger" href="{{ url('admin_delete_user', {id: user.id}) }}">Supprimer</a><br><a
+                                           class="text-success" href="{{ url('admin_user_edit', {id: user.id}) }}">Modifier</a></td>
                             </tr>
                         {% endfor %}
                         </tbody>

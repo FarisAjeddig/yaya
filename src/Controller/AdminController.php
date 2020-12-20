@@ -15,6 +15,7 @@ use App\Form\DoctorEdittedByAdminType;
 use App\Form\DoctorType;
 use App\Form\PrestationFormType;
 use App\Form\TypeDoctorType;
+use App\Form\UserEdittedByAdminType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -45,6 +46,29 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/edit/user/{id}", name="user_edit")
+     */
+    public function userEdit($id, Request $request){
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        $form = $this->createForm(UserEdittedByAdminType::class, $user);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Le compte de l\'utilisateur a bien été modifiée.');
+        }
+
+        return $this->render('admin/users/edit.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user
+        ]);
+    }
+
+    /**
      * @Route("/doctors", name="doctors")
      */
     public function doctors(){
@@ -58,6 +82,7 @@ class AdminController extends AbstractController
      * @Route("/edit/doctor/{id}", name="doctor_edit")
      */
     public function doctorEdit(Request $request, $id){
+        /** @var User $doc */
         $doc = $this->getDoctrine()->getRepository(User::class)->find($id);
 
         $typesDoctor = $this->getDoctrine()->getRepository(TypeDoctor::class)->findAll();
@@ -102,6 +127,9 @@ class AdminController extends AbstractController
         if ($form->isSubmitted()
 //            && $form->isValid()
         ){
+            $doc->setUsernameCanonical(strtolower($doc->getUsername()));
+            $doc->setEmailCanonical(strtolower($doc->getEmail()));
+            /** @var City $city */
             $city = $this->getDoctrine()->getRepository(City::class)->find($form->get('city')->getData());
             $doc->setCity($city);
             $repoTypesDoctors = $this->getDoctrine()->getRepository(TypeDoctor::class);
