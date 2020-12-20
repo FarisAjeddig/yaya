@@ -23,9 +23,9 @@
                         {% for appoint in appointments %}
                             <tr>
                                 <th scope="row">{{ appoint.id }}</th>
-                                <td>{{ appoint.doctor.username }}</td>
-                                <td>{{ appoint.namePatient }}</td>
-                                <td>{{ appoint.buyer.username }}</td>
+                                <td>{{ appoint.doctor.username ~ ' IBAN : ' ~ appoint.doctor.bankAccountNumber }} <br> {{ appoint.doctor.phoneNumber ~ ' ' ~ appoint.doctor.emailCanonical }}</td>
+                                <td>{{ appoint.namePatient ~ ' ' ~ appoint.phoneNumberPatient }} <br> {{ appoint.emailPatient }}</td>
+                                <td>{{ appoint.buyer.username ~ ' ' ~ appoint.buyer.phoneNumber }} <br> {{ appoint.buyer.emailCanonical }}</td>
                                 <td>{{ appoint.prestation.price }}€</td>
 {#                                <td>{{ appoint.state }}</td>#}
                             </tr>
