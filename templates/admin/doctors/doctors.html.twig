@@ -35,7 +35,7 @@
                                         {{ type.name }} &nbsp; &nbsp;
                                     {% endfor %}
                                 </td>
-                                <td>{{ user.city.name }}</td>
+                                <td>{% if user.city is not null %}{{ user.city.name }}{% endif %}</td>
                                 <td>{{ user.bankAccountNumber }}</td>
                                 <td>{{ user.matriculeDoctor }}</td>
                                 <td><img src="{{ asset('uploads/pictures/' ~ user.picture) }}" height="auto" width="70px" alt="Photo de {{ user.username }}" style="padding: 0 !important;"></td>
