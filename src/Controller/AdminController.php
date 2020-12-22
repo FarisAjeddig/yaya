@@ -55,6 +55,37 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/doctor/{id}/create/prestation", name="create_prestation")
+     */
+    public function createPrestation(Request $request, $id){
+        /** @var User $doc */
+        $doc = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        $prestation = new Prestation();
+        $form = $this->createForm(PrestationFormType::class, $prestation);
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            $em = $this->getDoctrine()->getManager();
+            if ($prestation->getPrice() < $doc->getLowerPrice() || !$doc->getLowerPrice()){
+                $doc->setLowerPrice($prestation->getPrice());
+            }
+            $prestation->setDoctor($doc);
+            $doc->addPrestation($prestation);
+            $em->persist($prestation);
+            $em->persist($doc);
+            $em->flush();
+
+            $this->addFlash('success', 'La prestation a bien été ajoutée.');
+
+            return $this->redirectToRoute('admin_doctor_prestations', ['id' => $id]);
+        }
+
+        return $this->render('admin/doctors/editPrestation.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
      * @Route("/edit/doctor/{id}", name="doctor_edit")
      */
     public function doctorEdit(Request $request, $id){
