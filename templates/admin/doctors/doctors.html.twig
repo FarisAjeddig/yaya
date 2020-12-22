@@ -5,7 +5,7 @@
             Admin - Les médecins
         {% endblock %}
         {% block bodyAdmin %}
-            <div class="container-fluid row p-2" style="background-color: #ffffff; box-sizing: unset;">
+            <div class="container-fluid row p-2" style="background-color: #ffffff; box-sizing: unset;overflow-x: scroll;">
                 <div class="col-lg-1"></div>
                 <div class="col-lg-10 text-center"><br><br>
                     <table class="table table-dark">
@@ -16,7 +16,10 @@
                             <th scope="col">Email</th>
                             <th scope="col">Tel</th>
                             <th scope="col">Type de docteur</th>
+                            <th>Ville</th>
+                            <th>IBAN</th>
                             <th scope="col">Matricule</th>
+                            <th>Photo</th>
                             <th scope="col">Actions</th>
                         </tr>
                         </thead>
@@ -32,7 +35,10 @@
                                         {{ type.name }} &nbsp; &nbsp;
                                     {% endfor %}
                                 </td>
+                                <td>{{ user.city.name }}</td>
+                                <td>{{ user.bankAccountNumber }}</td>
                                 <td>{{ user.matriculeDoctor }}</td>
+                                <td><img src="{{ asset('uploads/pictures/' ~ user.picture) }}" height="auto" width="70px" alt="Photo de {{ user.username }}" style="padding: 0 !important;"></td>
                                 <td>
                                     {#                            <a href="{{ url('admin_edit_doctor', {id: user.id}) }}" class="text-info">Modifier</a> | #}
 {#                                    <a class="text-danger" href="{{ url('admin_delete_user', {id: user.id}) }}">Supprimer</a><br>#}
